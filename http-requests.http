@@ -1,0 +1,7 @@
+GET http://localhost:3046
+Accept: application/json
+###
+
+GET http://localhost:3046/status
+Accept: application/json
+###
