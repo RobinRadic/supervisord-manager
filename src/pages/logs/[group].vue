@@ -22,13 +22,13 @@ let updateTimerId:any = null;
 const fetchData = () => {
     supervisor.readProcessStdoutLog(group, - 3000, 0).then((data) => {
         content.value = data;
+        lastUpdate.value = 0; // Reset the last update timer
     });
 };
 
 const startAutoRefresh = () => {
     if ( intervalId ) clearInterval(intervalId);
     intervalId = setInterval(fetchData, refreshInterval.value);
-    lastUpdate.value = 0; // Reset the last update timer
 };
 
 const stopAutoRefresh = () => {
@@ -48,10 +48,12 @@ const stopUpdateTimer = () => {
     updateTimerId = null;
 };
 watch(autoRefresh, (newValue) => {
-    if ( newValue ) {
+    if (newValue) {
         startAutoRefresh();
+        startUpdateTimer();
     } else {
         stopAutoRefresh();
+        stopUpdateTimer();
     }
 });
 
@@ -63,10 +65,12 @@ watch(refreshInterval, () => {
 
 onMounted(() => {
     fetchData();
+    startUpdateTimer();
 });
 
 onUnmounted(() => {
     stopAutoRefresh();
+    stopUpdateTimer();
 });
 </script>
 
@@ -77,7 +81,7 @@ onUnmounted(() => {
             <v-toolbar-title>{{ group }}</v-toolbar-title>
             <v-spacer></v-spacer>
             <v-toolbar-items class="log-toolbar-items">
-                <span class="log-toolbar-item log-toolbar-item-last-update">Last update {{ lastUpdate }} seconds ago</span>
+                <span v-if="autoRefresh" class="log-toolbar-item log-toolbar-item-last-update">Last update {{ lastUpdate }} seconds ago</span>
                 <v-checkbox-btn class="log-toolbar-item log-toolbar-item-auto-refresh" v-model="autoRefresh" label="Auto refresh"/>
                 <v-select
                     class="log-toolbar-item log-toolbar-item-refresh-interval"
@@ -107,5 +111,10 @@ onUnmounted(() => {
     &-refresh-interval {
         min-width : 200px;
     }
+}
+.log-toolbar-item-last-update {
+
+    padding: 23px;
+    font-size: 0.8rem;
 }
 </style>
