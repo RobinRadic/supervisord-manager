@@ -5,6 +5,7 @@ import { useLoaderDialog } from '@/composables/useLoaderDialog.js';
 import { useSupervisor } from '@/plugins/supervisor/index.js';
 import { useRouter } from 'vue-router';
 import { VCheckboxBtn, VSelect } from 'vuetify/components';
+import { useBreadcrumbs } from '../../composables/useBreadcrumbs.js';
 
 const router                  = useRouter();
 const supervisor              = useSupervisor();
@@ -12,6 +13,14 @@ const createLoader            = useLoaderDialog();
 const [ alerts, createAlert ] = useAlerts();
 
 const group                   = router.currentRoute.value.params.group;
+
+const {setCurrent,registerBreadcrumb} = useBreadcrumbs();
+registerBreadcrumb('logs', {parent:'configurations', title: group, path: `/logs/:group`,disabled:true });
+registerBreadcrumb('logs.group', {parent:'logs', title: 'Logs', path: `/logs/:group`,disabled:true });
+setCurrent('logs.group',{group});
+
+
+
 const autoRefresh             = ref(false);
 const content                 = ref('');
 const refreshInterval = ref(5000); // Default interval 5 seconds

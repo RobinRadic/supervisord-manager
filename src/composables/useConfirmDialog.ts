@@ -1,4 +1,4 @@
-import ConfirmDialog from '@/components/ConfirmDialog.vue';
+import ConfirmDialog from '../components/dialogs/ConfirmDialog.vue';
 import vuetify from '@/plugins/vuetify'; // Adjust the import path as necessary
 import { h } from 'vue';
 

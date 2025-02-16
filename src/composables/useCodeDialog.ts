@@ -1,4 +1,4 @@
-import CodeDialog from '@/components/CodeDialog.vue';
+import CodeDialog from '../components/dialogs/CodeDialog.vue';
 import vuetify from '@/plugins/vuetify'; // Adjust the import path as necessary
 import { h } from 'vue';
 

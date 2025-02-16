@@ -4151,6 +4151,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"prismjs@npm:^1.29.0":
+  version: 1.29.0
+  resolution: "prismjs@npm:1.29.0"
+  checksum: 007a8869d4456ff8049dc59404e32d5666a07d99c3b0e30a18bd3b7676dfa07d1daae9d0f407f20983865fd8da56de91d09cb08e6aa61f5bc420a27c0beeaf93
+  languageName: node
+  linkType: hard
+
 "proc-log@npm:^5.0.0":
   version: 5.0.0
   resolution: "proc-log@npm:5.0.0"
@@ -5850,6 +5857,15 @@ __metadata:
   languageName: node
   linkType: hard
 
+"vue-prism-editor@npm:alpha":
+  version: 2.0.0-alpha.2
+  resolution: "vue-prism-editor@npm:2.0.0-alpha.2"
+  peerDependencies:
+    vue: ^3.0.0
+  checksum: 6a873483698abbfd0ae7d92e29c77f29dbdfebfb046bc5899451328ebc975d650771552875352b2e9a898717c0ec3791aba9419594dccdf2eb41486075412ca4
+  languageName: node
+  linkType: hard
+
 "vue-router@npm:^4.4.0":
   version: 4.5.0
   resolution: "vue-router@npm:4.5.0"
@@ -5949,6 +5965,7 @@ __metadata:
     node-supervisord: ^1.0.6-rc.2
     npm-run-all2: ^7.0.1
     pinia: ^2.1.7
+    prismjs: ^1.29.0
     reflect-metadata: ^0.2.2
     roboto-fontface: "*"
     sass: 1.77.8
@@ -5967,6 +5984,7 @@ __metadata:
     vite-plugin-vuetify: ^2.0.3
     volar: ^0.0.2
     vue: ^3.4.31
+    vue-prism-editor: alpha
     vue-router: ^4.4.0
     vue-tsc: ^2.1.10
     vuetify: ^3.6.14

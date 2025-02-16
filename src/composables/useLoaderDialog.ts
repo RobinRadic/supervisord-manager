@@ -1,4 +1,4 @@
-import LoaderDialog from '@/components/LoaderDialog.vue';
+import LoaderDialog from '../components/dialogs/LoaderDialog.vue';
 import vuetify from '@/plugins/vuetify'; // Adjust the import path as necessary
 import { h } from 'vue';
 

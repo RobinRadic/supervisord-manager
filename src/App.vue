@@ -5,7 +5,6 @@
 </template>
 
 <script lang="ts" setup>
-
 import { useSupervisor } from '@/plugins/supervisor/index.js';
 
 const supervisor = useSupervisor();

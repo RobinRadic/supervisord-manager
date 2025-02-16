@@ -108,13 +108,18 @@ import useAppBarComponents from '@/composables/useAppBarComponents.js';
 import type { MdiIconName } from '@/types/icons.js';
 import { useRouter } from 'vue-router';
 import { VBadge, VList, VListItem } from 'vuetify/components';
-const breadcrumbs = ref([
-    { key:'root', title: 'Supervisord Manager', disabled: false, to: '/' },
-    { key:'dashboard', title: 'Dashboard', disabled: false, to: '/dashboard' },
-    { key:'processes', title: 'Processes', disabled: false, to: '/dashboard#processes' },
-    { key:'logs', title: 'Logs', disabled: true, to: '/logs/' },
-]);
-const router=useRouter();
+import { useBreadcrumbs } from '@/composables/useBreadcrumbs.js';
+
+const {registerBreadcrumbs,breadcrumbs} = useBreadcrumbs()
+registerBreadcrumbs({
+    index: { title: 'Supervisord Manager', path: '/' },
+    settings: { parent: 'index', title: 'Settings', path: '/settings' },
+    dashboard: { parent: 'index', title: 'Dashboard', path: '/dashboard' },
+    processes: { parent: 'dashboard', title: 'Processes', path: '/dashboard#processes' },
+    configurations: { parent: 'dashboard', title: 'Configurations', path: '/dashboard#configurations' },
+})
+
+const router=window['router']=useRouter();
 const {components} = useAppBarComponents()
 type SidebarItemBadge = Partial<InstanceType<typeof VBadge>>
 type SidebarItem = Partial<InstanceType<typeof VListItem>> & { icon?: MdiIconName, type?: string, badge?: SidebarItemBadge, children?: SidebarItem[] }
