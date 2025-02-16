@@ -24,3 +24,4 @@ pnpm-debug.log*
 /supervisor.log
 /supervisor.stdout.log
 /.yarn
+.env

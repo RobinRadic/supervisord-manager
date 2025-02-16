@@ -1,8 +1,9 @@
-import 'dotenv/config'
+
 // Plugins
 import Vue from '@vitejs/plugin-vue';
-import { configDotenv } from 'dotenv';
+import { config } from 'dotenv';
 import { fileURLToPath, URL } from 'node:url';
+import { dirname, join } from 'path';
 import AutoImport from 'unplugin-auto-import/vite';
 import Fonts from 'unplugin-fonts/vite';
 import Components from 'unplugin-vue-components/vite';
@@ -10,19 +11,24 @@ import VueRouter from 'unplugin-vue-router/vite';
 
 // Utilities
 import { defineConfig } from 'vite';
-import MonacoEditorNlsPlugin, {esbuildPluginMonacoEditorNls, Languages } from 'vite-plugin-monaco-editor-nls';
 import Layouts from 'vite-plugin-vue-layouts';
 import Vuetify, { transformAssetUrls } from 'vite-plugin-vuetify';
 
-import viteBasicSSlPlugin from '@vitejs/plugin-basic-ssl'
+const _dirname = dirname(fileURLToPath(import.meta.url))
 
-configDotenv({
-
+config({
+    debug:true,
+    path:join(_dirname,'.env')
 })
+
+console.log('process.env.SERVER_PORT', process.env.SERVER_PORT);
 
 // https://vitejs.dev/config/
 export default defineConfig({
-    define: { 'process.env': {} },
+    define: {
+        'process.env': {},
+        '__SERVER_PORT__': process.env.SERVER_PORT,
+    },
     resolve: {
         alias: {
             vue: 'vue/dist/vue.esm-bundler.js',
@@ -42,14 +48,10 @@ export default defineConfig({
         port: 3000,
         // https:true
     },
-    optimizeDeps:{
-        esbuildOptions:{
-            define:{
-                'process.env.SERVER_PORT':process.env.SERVER_PORT,
-            },
-            plugins:[
-            ]
-        }
+    optimizeDeps: {
+        esbuildOptions: {
+            plugins: [],
+        },
     },
     css: {
         preprocessorOptions: {

@@ -24,6 +24,11 @@ export class Supervisor {
         });
     }
 
+    async fileExists(path:string){
+        const res = await this.axios.get(`/files/exist?path=${path}`);
+        return res.data;
+    }
+
     findConfigForGroup(group: string) {
         let config = this.data.files.find(f => {
             return Object.keys(f.config).map(key => strStripLeft(key, 'program:')).find(k => k === group) !== undefined;

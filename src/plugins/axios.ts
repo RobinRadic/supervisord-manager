@@ -3,10 +3,11 @@ import type { AxiosInstance, CreateAxiosDefaults } from 'axios';
 import Axios from 'axios';
 import type { App } from 'vue';
 
+declare const __SERVER_PORT__: number;
 
 export default function axiosPlugin(options:CreateAxiosDefaults={}){
     options = defaults(options, {
-       baseURL: 'http://localhost:3046',
+       baseURL: 'http://localhost:' + __SERVER_PORT__,
     });
     const instance = Axios.create(options);
     console.log('axiosPlugin')
