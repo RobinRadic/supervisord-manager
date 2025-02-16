@@ -1,5 +1,7 @@
+import 'dotenv/config'
 // Plugins
 import Vue from '@vitejs/plugin-vue';
+import { configDotenv } from 'dotenv';
 import { fileURLToPath, URL } from 'node:url';
 import AutoImport from 'unplugin-auto-import/vite';
 import Fonts from 'unplugin-fonts/vite';
@@ -13,6 +15,11 @@ import Layouts from 'vite-plugin-vue-layouts';
 import Vuetify, { transformAssetUrls } from 'vite-plugin-vuetify';
 
 import viteBasicSSlPlugin from '@vitejs/plugin-basic-ssl'
+
+configDotenv({
+
+})
+
 // https://vitejs.dev/config/
 export default defineConfig({
     define: { 'process.env': {} },
@@ -37,6 +44,9 @@ export default defineConfig({
     },
     optimizeDeps:{
         esbuildOptions:{
+            define:{
+                'process.env.SERVER_PORT':process.env.SERVER_PORT,
+            },
             plugins:[
             ]
         }

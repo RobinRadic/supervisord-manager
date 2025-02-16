@@ -1613,20 +1613,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"ace-builds@npm:^1.37.5":
-  version: 1.37.5
-  resolution: "ace-builds@npm:1.37.5"
-  checksum: b3ac4ce595a86bb02591b8f32f003c51e56670862dbd2e6548bb7c5e91337a864267381b1147b1306ea6c9445eeda8543e6e60053828c267788a412b54e83b20
-  languageName: node
-  linkType: hard
-
-"ace-code@npm:^1.37.5":
-  version: 1.37.5
-  resolution: "ace-code@npm:1.37.5"
-  checksum: 0f74518f4e9457c79e62903216091af33793ba724019bdc6e7979316a5b13192788d8f57bc7d0f703a25d0014fa2e882a862d35a089b57080b6cad8852414ad1
-  languageName: node
-  linkType: hard
-
 "acorn-jsx@npm:^5.3.2":
   version: 5.3.2
   resolution: "acorn-jsx@npm:5.3.2"
@@ -2178,6 +2164,13 @@ __metadata:
   dependencies:
     dequal: ^2.0.0
   checksum: d2ff650bac0bb6ef08c48f3ba98640bb5fec5cce81e9957eb620408d1bab1204d382a45b785c6b3314dc867bb0684936b84c6867820da6db97cbb5d3c15dd185
+  languageName: node
+  linkType: hard
+
+"dotenv@npm:^16.4.7":
+  version: 16.4.7
+  resolution: "dotenv@npm:16.4.7"
+  checksum: c27419b5875a44addcc56cc69b7dc5b0e6587826ca85d5b355da9303c6fc317fc9989f1f18366a16378c9fdd9532d14117a1abe6029cc719cdbbef6eaef2cea4
   languageName: node
   linkType: hard
 
@@ -3768,13 +3761,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"monaco-editor@npm:^0.52.2":
-  version: 0.52.2
-  resolution: "monaco-editor@npm:0.52.2"
-  checksum: d5ff7b7a469afee25ac708d9ace0dcc5ef24ed328dfc526a52944a497f0d826cfb0685a778ff4b7becc0a8f7843f260c17ea6de3f6719481d53501d79ebb1260
-  languageName: node
-  linkType: hard
-
 "ms@npm:2.0.0":
   version: 2.0.0
   resolution: "ms@npm:2.0.0"
@@ -3846,7 +3832,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"node-supervisord@npm:^1.0.6-rc.2":
+"node-supervisord@npm:1.0.6-rc.2":
   version: 1.0.6-rc.2
   resolution: "node-supervisord@npm:1.0.6-rc.2"
   dependencies:
@@ -5517,15 +5503,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"vite-plugin-monaco-editor-nls@npm:^3.0.1":
-  version: 3.0.1
-  resolution: "vite-plugin-monaco-editor-nls@npm:3.0.1"
-  peerDependencies:
-    vite: ">=2.3.0"
-  checksum: 96926320d3581a9105ea1c93056783f279c67f4ec19ee5ab643cb17bbe05fc3349b39e8849fbd566e28639ef91394b4cf74a43427e71c7eeaa8490dd352fd3f6
-  languageName: node
-  linkType: hard
-
 "vite-plugin-vue-layouts@npm:^0.11.0":
   version: 0.11.0
   resolution: "vite-plugin-vue-layouts@npm:0.11.0"
@@ -5947,13 +5924,12 @@ __metadata:
     "@vue/eslint-config-typescript": ^14.1.3
     "@vue/language-server": ^2.2.0
     "@vue/tsconfig": ^0.5.1
-    ace-builds: ^1.37.5
-    ace-code: ^1.37.5
     axios: ^1.7.9
     body-parse: ^0.1.0
     core-js: ^3.37.1
     cors: ^2.8.5
     dayjs: ^1.11.13
+    dotenv: ^16.4.7
     eslint: ^9.14.0
     eslint-plugin-vue: ^9.30.0
     express: ^4.21.2
@@ -5961,8 +5937,7 @@ __metadata:
     ini: ^5.0.0
     inversify: ^6.2.2
     lodash: ^4.17.21
-    monaco-editor: ^0.52.2
-    node-supervisord: ^1.0.6-rc.2
+    node-supervisord: 1.0.6-rc.2
     npm-run-all2: ^7.0.1
     pinia: ^2.1.7
     prismjs: ^1.29.0
@@ -5979,7 +5954,6 @@ __metadata:
     unplugin-vue-components: ^0.27.2
     unplugin-vue-router: ^0.10.0
     vite: ^5.4.10
-    vite-plugin-monaco-editor-nls: ^3.0.1
     vite-plugin-vue-layouts: ^0.11.0
     vite-plugin-vuetify: ^2.0.3
     volar: ^0.0.2

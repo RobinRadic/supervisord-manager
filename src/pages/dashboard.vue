@@ -7,7 +7,7 @@
         >
             <v-tab v-for="tab in tabs" :value="tab.name">{{ tab.title }}</v-tab>
             <div class="flex-grow-1"></div>
-            <v-btn color="error" variant="flat" size="x-large" @click="handleCreate">Create</v-btn>
+            <v-btn color="success" to="/create" variant="flat" size="x-large">Create</v-btn>
         </v-tabs>
 
         <v-card-text>

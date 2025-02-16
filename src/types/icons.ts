@@ -7449,3 +7449,6 @@ export interface MdiIcons {
 }
 
 export type MdiIconName = keyof MdiIcons;
+
+
+export const icon = (name: MdiIconName): string => name;

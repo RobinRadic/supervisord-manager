@@ -36,8 +36,8 @@ export class Server {
             supervisor: {
                 client: {
                     host: 'http://127.0.0.1:9005',
-                    username: 'radic',
-                    password: 'test',
+                    username: '',
+                    password: '',
                 },
                 server: {
                     configurationFilePath: '/etc/supervisor/supervisord.conf',
