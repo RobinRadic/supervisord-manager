@@ -29,7 +29,7 @@ if ( !config ) throw new Error('No config found for group ' + group);
 const content = ref(config.content);
 
 const { setCurrent, registerBreadcrumb } = useBreadcrumbs();
-registerBreadcrumb('edit', { parent: 'configurations', title: group, path: `/edit/${group}`, disabled: true });
+registerBreadcrumb('edit', { parent: 'dashboard', title: group, path: `/edit/${group}`, disabled: true });
 registerBreadcrumb('edit.group', { parent: 'edit', title: 'Edit', path: `/edit/${group}`, disabled: true });
 setCurrent('edit.group', { group });
 

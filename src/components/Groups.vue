@@ -91,7 +91,7 @@ const getStatenameChipColor = (state: string) => {//@formatter:off
 
                         <template v-if="group.hasProcesses">
                             <v-btn v-if="[ProcessState.RUNNING,ProcessState.STARTING].includes(group?.processes?.[0].state)"
-                                   prepend-icon="mdi-play"
+                                   prepend-icon="mdi-stop"
                                    color="warning"
                                    size="small"
                                    @click="() => handlers.stop(group.name)"
@@ -102,7 +102,7 @@ const getStatenameChipColor = (state: string) => {//@formatter:off
                                    size="small"
                                    @click="() => handlers.start(group.name)"
                             >Start</v-btn>
-                            <v-btn prepend-icon="mdi-minux"
+                            <v-btn prepend-icon="mdi-minus"
                                    color="error"
                                    size="small"
                                    @click="() => handlers.remove(group.name)"

@@ -4,7 +4,8 @@ import { useAlerts } from '@/composables/useAlerts.js';
 import { useLoaderDialog } from '@/composables/useLoaderDialog.js';
 import { useSupervisor } from '@/plugins/supervisor/index.js';
 import { useRouter } from 'vue-router';
-import { VCheckboxBtn, VSelect } from 'vuetify/components';
+import { VBtn, VCheckboxBtn, VSelect } from 'vuetify/components';
+import useAppBarComponents from '../../composables/useAppBarComponents.js';
 import { useBreadcrumbs } from '../../composables/useBreadcrumbs.js';
 
 const router                  = useRouter();
@@ -15,10 +16,14 @@ const [ alerts, createAlert ] = useAlerts();
 const group                   = router.currentRoute.value.params.group;
 
 const {setCurrent,registerBreadcrumb} = useBreadcrumbs();
-registerBreadcrumb('logs', {parent:'configurations', title: group, path: `/logs/:group`,disabled:true });
+registerBreadcrumb('logs', {parent:'dashboard', title: group, path: `/logs/:group`,disabled:true });
 registerBreadcrumb('logs.group', {parent:'logs', title: 'Logs', path: `/logs/:group`,disabled:true });
 setCurrent('logs.group',{group});
 
+
+const appBar = useAppBarComponents();
+appBar.clearComponents();
+appBar.add(VBtn, { color: 'success', onClick:() => router.back(), variant: 'flat', size: 'x-large', text: 'Back', prependIcon: 'mdi-arrow-left' });
 
 
 const autoRefresh             = ref(false);

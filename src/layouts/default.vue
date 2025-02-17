@@ -116,8 +116,6 @@ registerBreadcrumbs({
     index: { title: 'Supervisord Manager', path: '/' },
     settings: { parent: 'index', title: 'Settings', path: '/settings' },
     dashboard: { parent: 'index', title: 'Dashboard', path: '/dashboard' },
-    processes: { parent: 'dashboard', title: 'Processes', path: '/dashboard#processes' },
-    configurations: { parent: 'dashboard', title: 'Configurations', path: '/dashboard#configurations' },
 })
 
 const router=window['router']=useRouter();
