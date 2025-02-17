@@ -1,0 +1,6 @@
+{
+    "allowed_ips": [],
+    "users": [
+        {"name": "Robin","email": "rradic@hotmail.com","password": "test"}
+    ]
+}

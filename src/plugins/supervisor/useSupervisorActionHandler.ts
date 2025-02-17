@@ -24,7 +24,7 @@ export class SupervisorActionHandler {
         const destroy = this.createLoader({ message: `Stopping Process [${name}]...` });
         try {
             const response = await this.supervisor.startProcess(name);
-            await this.supervisor.updateState();
+            await this.supervisor.updateStatus();
         } catch (e) {
             this.createAlert('error','Error',e.response?.data?.error||e.message,alertTimeout);
         }
@@ -35,7 +35,7 @@ export class SupervisorActionHandler {
         const destroy = this.createLoader({ message: `Starting Process [${name}]...` });
         try {
             const response = await this.supervisor.startProcess(name);
-            await this.supervisor.updateState();
+            await this.supervisor.updateStatus();
         } catch (e) {
             this.createAlert('error','Error',e.response?.data?.error||e.message,alertTimeout);
         }
@@ -46,21 +46,54 @@ export class SupervisorActionHandler {
         const destroy = this.createLoader({ message: `Starting Process Group [${name}]...` });
         try{
         const response   = await this.supervisor.startProcessGroup(name);
-        await this.supervisor.updateState();
+        await this.supervisor.updateStatus();
         } catch (e) {
             this.createAlert('error','Error',e.response?.data?.error||e.message,alertTimeout);
         }
         destroy();
     }
 
-    async reload() {
-        const destroy = this.createLoader({ message: `Reloading...` });
+    async addProcessGroup(name:string) {
+        const destroy = this.createLoader({ message: `Adding process group...` });
         try {
-            const response = await this.supervisor.reload();
-            await this.supervisor.updateState();
+            const response = await this.supervisor.addProcessGroup(name);
+            await this.supervisor.updateStatus();
+            destroy();
+            this.createAlert('success','Added', 'Process group has been added', 4000)
+            return true;
         } catch (e) {
             this.createAlert('error','Error',e.response?.data?.error||e.message,alertTimeout);
         }
         destroy();
+        return false;
+    }
+    async removeProcessGroup(name:string) {
+        const destroy = this.createLoader({ message: `Remove process group...` });
+        try {
+            const response = await this.supervisor.removeProcessGroup(name);
+            await this.supervisor.updateStatus();
+            destroy();
+            this.createAlert('success','Added', 'Process group has been removed', 4000)
+            return true;
+        } catch (e) {
+            this.createAlert('error','Error',e.response?.data?.error||e.message,alertTimeout);
+        }
+        destroy();
+        return false;
+    }
+
+    async reload() {
+        const destroy = this.createLoader({ message: `Reloading...` });
+        try {
+            const response = await this.supervisor.reload();
+            await this.supervisor.updateStatus();
+            destroy();
+            this.createAlert('success','Reloaded', 'Supervisor has been reloaded', 4000)
+            return true;
+        } catch (e) {
+            this.createAlert('error','Error',e.response?.data?.error||e.message,alertTimeout);
+        }
+        destroy();
+        return false;
     }
 }

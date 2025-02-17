@@ -1,83 +1,30 @@
 <template>
     <v-card width="100%" height="100%">
-        <v-tabs
-            v-model="tab"
-            @update:modelValue="updateTab"
-            bg-color="primary"
-        >
-            <v-tab v-for="tab in tabs" :value="tab.name">{{ tab.title }}</v-tab>
-            <div class="flex-grow-1"></div>
-            <v-btn color="success" to="/create" variant="flat" size="x-large">Create</v-btn>
-        </v-tabs>
-
-        <v-card-text>
-            <v-tabs-window v-model="tab">
-                <v-tabs-window-item v-for="tab in tabs" :value="tab.name">
-                    <component :is="tab.component"/>
-                </v-tabs-window-item>
-            </v-tabs-window>
-        </v-card-text>
+        <Groups compact :groups="supervisor.groups.value"/>
     </v-card>
 </template>
 
 <script lang="ts" setup>
-import Configurations from '@/components/Configurations.vue';
-import Processes from '@/components/Processes.vue';
-import { useLoaderDialog } from '@/composables/useLoaderDialog.js';
+import { VBtn } from 'vuetify/components';
+import Groups from '../components/Groups.vue';
+import useAppBarComponents from '../composables/useAppBarComponents.js';
 import { useBreadcrumbs } from '../composables/useBreadcrumbs.js';
+import { useSupervisor, useSupervisorActionHandler } from '../plugins/supervisor/index.js';
 
-const {setCurrent} = useBreadcrumbs()
-setCurrent('dashboard')
+const supervisor = useSupervisor();
 
-const createDialog = useLoaderDialog()
-const handleCreate = () => {
-    const destroy = createDialog({
-        message: 'Creating new process...',
-    });
-    setTimeout(() => {
-        destroy();
-    }, 2000);
-}
-const updateTab = (tab: string,...args) => {
-    console.log('Tab changed to', tab, ...args);
-    // location.hash = tab;
-    history.pushState({tab}, '', `#${tab}`);
-    setCurrent(tab);
-}
-// window.addEventListener('hashchange', () => {
-//     tab.value = location.hash.replace('#', '') || 'processes';
-// });
-const tab  = ref(location.hash.replace('#', '') || 'processes');
-setCurrent(tab.value);
-const tabs = [
-    { name: 'processes', title: 'Processes', component: Processes },
-    { name: 'configurations', title: 'Configurations', component: Configurations },
-];
+const actions = useSupervisorActionHandler();
+const reload  = async () => {
+    return actions.reload();
+};
 
-const popStateListener = (event: PopStateEvent) => {
-    console.log('Pop state', event.state);
-    if ( event.state && event.state.tab ) {
-        tab.value = event.state.tab;
-    }
-}
-onMounted(() => {
-    if ( location.hash.startsWith('#') ) {
-        let _tab           = location.hash.slice(1);
-        tab.value = _tab;
-    }
-    let hash = `#${tab.value}`
-    if ( location.hash != hash ) {
-        location.hash = hash;
-    }
-    history.pushState({
-        tab: tab.value
-    }, '', `#${tab.value}`)
+const appBar = useAppBarComponents();
+appBar.clearComponents();
+appBar.add(VBtn, { color: 'success', onClick: reload, variant: 'flat', size: 'x-large', text: 'Reload', border:'s-lg', prependIcon: 'mdi-reload' });
+appBar.add(VBtn, { color: 'success', to: '/create', variant: 'flat', size: 'x-large', text: 'Create', border:'s-lg', prependIcon: 'mdi-plus' });
 
-    window.addEventListener("popstate", popStateListener);
-});
+const { setCurrent } = useBreadcrumbs();
+setCurrent('dashboard');
 
-onBeforeUnmount(() => {
-    window.removeEventListener('popstate', popStateListener);
-});
 
 </script>

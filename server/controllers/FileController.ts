@@ -1,19 +1,43 @@
 import type e from 'express';
-import {inject } from 'inversify';
-import { Response, Controller, Get, Params,Request, Post } from '../decorators';
+import { inject } from 'inversify';
+import { Controller, Get, Params, Post, Request, Response } from '../decorators';
 import { LogRequestMiddleware } from '../middleware/LogRequestMiddleware.js';
 import { Supervisor } from '../services/Supervisor.js';
+import { BaseController } from './BaseController.js';
 
-@Controller('/files',[LogRequestMiddleware])
-export class FileController {
+@Controller('/files', [ LogRequestMiddleware ])
+export class FileController extends BaseController {
     @inject(Supervisor) supervisor: Supervisor;
 
-    @Get('/exist')
-    async index() {
-       let pid = await this.supervisor.pid();
-        return `Hello World
-pid: ${pid}
-        `;
+    @Get('/exists/:path')
+    async exists(
+        @Response() res: e.Response,
+        @Request() req: e.Request,
+        @Params('path') path: string,
+    ) {
+        path         = decodeURIComponent(path);
+        const exists = await this.supervisor.fs.canReadFrom(path);
+        return this.respondWithSuccess({ exists });
+    }
+
+    @Post('/link')
+    async link(
+        @Response() res: e.Response,
+        @Request() req: e.Request,
+    ) {
+        return {success: await this.supervisor.fs.link(req.body.path, req.body.filename)};
+    }
+
+
+    @Post('/config/:group')
+    async saveConfig(@Response() res:e.Response, @Request() req:e.Request, @Params('group') group:string) {
+        return this.respond(await this.supervisor.fs.saveConfig(group, req.body));
+    }
+
+
+    @Get('/config')
+    async config(@Response() res:e.Response) {
+        return this.respondWithSuccess(await this.supervisor.fs.getAllConfig());
     }
 
 }

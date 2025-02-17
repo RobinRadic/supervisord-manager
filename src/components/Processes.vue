@@ -10,18 +10,34 @@ import type { DataTableHeader } from 'vuetify/dist/vuetify.d.ts';
 import { ProcessState } from '../../shared/ProcessState.js';
 
 dayjs.extend(dayjsRelativeTime);
+const props = defineProps<{
+    compact?:boolean
+    items:ProcessInfo[]
+}>()
+
 const supervisor                 = useSupervisor();
 const actions                    = useSupervisorActionHandler();
-const items: Ref<ProcessInfo[]>  = toRef(supervisor.data, 'processes');
-const headers: DataTableHeader[] = [
-    { title: 'Name', key: 'name' },
-    { title: 'Group', key: 'group', align: 'end' },
-    { title: 'State', key: 'statename' },
-    { title: 'Last start', key: 'start', value: (item: ProcessInfo) => dayjs(item.start * 1000).toNow(true) + ' ago' },
-    { title: 'Last stop', key: 'stop', value: (item: ProcessInfo) => dayjs(item.stop * 1000).toNow(true) + ' ago' },
-    { title: 'Description', key: 'description' },
-    { title: 'Actions', key: 'actions', sortable: false },
-];
+const items: Ref<ProcessInfo[]>  = toRef(props, 'items');
+const headers: DataTableHeader[] = [];
+
+if(props.compact){
+    headers.push(
+        { title: 'Name', key: 'name' },
+        { title: 'State', key: 'statename' },
+        { title: 'Description', key: 'description' },
+        { title: 'Actions', key: 'actions', sortable: false },
+    )
+} else {
+    headers.push(
+        { title: 'Name', key: 'name' },
+        { title: 'Group', key: 'group', align: 'end' },
+        { title: 'State', key: 'statename' },
+        { title: 'Last start', key: 'start', value: (item: ProcessInfo) => dayjs(item.start * 1000).toNow(true) + ' ago' },
+        { title: 'Last stop', key: 'stop', value: (item: ProcessInfo) => dayjs(item.stop * 1000).toNow(true) + ' ago' },
+        { title: 'Description', key: 'description' },
+        { title: 'Actions', key: 'actions', sortable: false },
+    )
+}
 
 const createCodeDialog = useCodeDialog();
 
@@ -30,23 +46,6 @@ const handlers = {
     stop: async (name: string) => actions.stopProcess(name),
     startGroup: async (name: string) => actions.startProcessGroup(name),
     reload: async (name: string) => actions.reload(name),
-    edit: (item) => {
-        console.log('Edit', item);
-
-        let config = supervisor.data.files.find(f => {
-            return Object.keys(f.config).map(key => strStripLeft(key, 'program:')).find(k => k === item.group) !== undefined;
-        });
-        // useRouter().push('/edit/:configfile',{params: {configfile:config.path}})
-        if ( !config ) {
-            console.warn('No config found for item', item);
-            return;
-        }
-        createCodeDialog({
-            open: true,
-            code: config.content,
-            language: 'ini',
-        });
-    },
     delete: () => console.log('delete'),
     logs: () => console.log('logs'),
 };
@@ -93,9 +92,6 @@ const getStatenameChipColor = (state: string) => {//@formatter:off
         </template>
         <!-- 'primary', 'secondary', 'accent', 'error', 'warning', 'info', 'success'-->
         <template v-slot:item.actions="{ item }">
-            <!--            <v-btn prepend-icon="mdi-pencil" color="primary" size="small" :to="'/edit/' + item.group">Edit</v-btn>-->
-            <!--            <v-btn prepend-icon="mdi-delete" color="error" size="small" @click="() => handlers.delete(item.name)">Delete</v-btn>-->
-
             <v-btn v-if="[ProcessState.RUNNING,ProcessState.STARTING].includes(item.state)" prepend-icon="mdi-play" color="warning" size="small" @click="() => handlers.stop(item.group +':'+item.name)">Stop</v-btn>
             <v-btn v-else prepend-icon="mdi-play" color="success" size="small" @click="() => handlers.start(item.group +':'+item.name)">Start</v-btn>
             <v-btn prepend-icon="mdi-label" color="info" size="small" :to="'/logs/' + item.group +':'+item.name">Logs</v-btn>

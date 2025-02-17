@@ -90,6 +90,7 @@
                 </v-breadcrumbs>
 
                 <div class="flex-grow-1"></div>
+
                 <template v-for="(component,i) in components"  :key="i" >
                     <component :is="component.component" v-bind="component.props"/>
                 </template>
@@ -178,6 +179,11 @@ const sidebarItems: SidebarItem[] = [
 .r-layout__main {
     .v-breadcrumbs__prepend {
         width : 30px;
+    }
+    .v-toolbar__content {
+        .v-btn {
+            //margin-left: 3px;
+        }
     }
 }
 .r-sidebar__list {

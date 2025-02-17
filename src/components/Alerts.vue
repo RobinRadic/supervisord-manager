@@ -10,7 +10,8 @@ window['createAlert'] = createAlert
 <style lang="scss">
 .alerts {
     position  : absolute;
-    top       : 125px;
+    //top       : 125px;
+    bottom       : 50px;
     max-width : 600px;
     right     : 20px;
 }

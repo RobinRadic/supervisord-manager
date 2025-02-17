@@ -1,6 +1,6 @@
 import type { ConfigInfo, ProcessInfo, State } from 'node-supervisord/dist/interfaces.js';
 
-export interface StateResponse {
+export interface StatusResponse {
     version: string;
     apiVersion: string;
     configs: ConfigInfo[];
@@ -18,5 +18,30 @@ export interface ReloadResponse {
 
 export interface ConfigResponse {
     config: any;
-    files:Array<{content:string, config:any, path:string}>;
+    files: Array<{ content: string, config: any, path: string }>;
+}
+
+export interface FullResponse {
+    groups: Group[];
+    status: StatusResponse;
+    config: ConfigResponse;
+}
+
+
+export interface Group {
+    [ key: string ]: any;
+
+    name: string;
+    hasProcesses: boolean;
+    configs: ConfigInfo[];
+    processes: ProcessInfo[];
+    process_name?: string;
+    command: string;
+    autostart?: boolean;
+    autorestart?: boolean;
+    numprocs?: string;
+    redirect_stderr?: boolean;
+    logfile?: string;
+    stdout_logfile?: string;
+    stderr_logfile?: string;
 }

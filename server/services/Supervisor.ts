@@ -1,6 +1,7 @@
 import { inject, injectable } from 'inversify';
+import { groupBy } from 'lodash-es';
 import { SupervisordClient } from 'node-supervisord';
-import type { ConfigResponse, ReloadResponse, StateResponse } from '../../shared/api.js';
+import type { ConfigResponse, FullResponse, Group, ReloadResponse, StatusResponse } from '../../shared/api.js';
 import type { Configuration } from '../Server.js';
 import { SupervisorFiles } from './SupervisorFiles.js';
 
@@ -9,24 +10,32 @@ export class Supervisor {
     @inject(SupervisorFiles) fs: SupervisorFiles;
     @inject(SupervisordClient) api: SupervisordClient;
 
-
-    async pid(): Promise<number> {
-        return this.api.getPID();
+    async full():Promise<FullResponse>{
+        const status = await this.status();
+        const config = await this.fs.getAllConfig();
+        let _groups  = {}
+        config.files.forEach(f => {
+            Object.keys(f.config).forEach(key => {
+                let name = key.replace('program:','')
+                _groups[name] = f.config[key]
+                _groups[name].hasProcesses = false;
+                _groups[name].name = name;
+                _groups[name].processes = [];
+                _groups[name].configs = [];
+            })
+        })
+        Object.entries(groupBy(status.processes,'group')).forEach(([group, processes]) => {
+            _groups[group].hasProcesses = processes.length > 0
+            _groups[group].processes = processes
+        })
+        Object.entries(groupBy(status.configs,'group')).map(([group, configs]) => {
+            _groups[group].configs = configs;
+        })
+        let groups = Object.values(_groups) as Group[];
+        return {groups,  status,  config};
     }
 
-    async readLog(offset: number, length: number ) {
-        return this.api.readLog(offset, length)
-    }
-
-    async readProcessStdoutLog(name:string,offset: number, length: number ) {
-        return this.api.readProcessStdoutLog(name,offset, length)
-    }
-
-    async readProcessStderrLog(name:string,offset: number, length: number ) {
-        return this.api.readProcessStderrLog(name,offset, length)
-    }
-
-    async state(): Promise<StateResponse> {
+    async status(): Promise<StatusResponse> {
         const [version,apiVersion, configs, processes, identification, state, methods ] = await Promise.all([
             this.api.getSupervisorVersion(),
             this.api.getAPIVersion(),
@@ -47,14 +56,5 @@ export class Supervisor {
             removed: result[ 0 ][ 2 ],
         };
     }
-
-    async startProcessGroup(name: string, wait: boolean = true) {
-        return this.api.startProcessGroup(name, wait);
-    }
-
-    async startProcess(name: string, wait: boolean = true) {
-        return this.api.startProcess(name, wait);
-    }
-
 }
 

@@ -12,13 +12,13 @@ const loaded     = ref(false);
 
 Promise.all([
     supervisor.updateConfig(),
-    supervisor.updateState(),
+    supervisor.updateStatus(),
 ]).then(() => {
     loaded.value = true;
 });
 
 setInterval(() => {
-    supervisor.updateState();
+    supervisor.updateStatus();
 }, 5000);
 </script>
 

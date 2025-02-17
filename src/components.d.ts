@@ -13,6 +13,7 @@ declare module 'vue' {
     Configurations: typeof import('./components/Configurations.vue')['default']
     ConfigurationType: typeof import('./components/create/configuration-type.vue')['default']
     ConfirmDialog: typeof import('./components/dialogs/ConfirmDialog.vue')['default']
+    Groups: typeof import('./components/Groups.vue')['default']
     HelloWorld: typeof import('./components/HelloWorld.vue')['default']
     LinkCreator: typeof import('./components/create/link-creator.vue')['default']
     LoaderDialog: typeof import('./components/dialogs/LoaderDialog.vue')['default']

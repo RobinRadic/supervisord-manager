@@ -2,6 +2,8 @@ import { objectify, strStripLeft } from '@radicjs/utils';
 import { promises as fs } from 'fs';
 import { globby } from 'globby';
 import { parse } from 'ini';
+import {dirname,join } from 'path';
+import shelljs from 'shelljs';
 import { inject, injectable } from 'inversify';
 import type { ConfigResponse } from '../../shared/api.js';
 import type { Configuration } from '../Server.js';
@@ -22,7 +24,44 @@ export class SupervisorFiles {
     config: any                = {};
     files: {path:string,config:object,content:string}[]= [];
     loaded:boolean             = false;
+    configDir:string
 
+    async canAccess(path:string, type:number){
+        try {
+            let res = await fs.access(path, type)
+            return true;
+        } catch (e) {
+            return false
+        }
+    }
+
+    async canWriteTo(path:string){
+        return this.canAccess(path, fs.constants.W_OK)
+    }
+
+    async isVisible(path:string){
+        return this.canAccess(path, fs.constants.F_OK)
+    }
+
+    async canReadFrom(path:string){
+        return this.canAccess(path, fs.constants.R_OK)
+    }
+
+    async configFileExists(filename:string){
+        return this.canReadFrom(join(this.configDir, filename));
+    }
+
+    async link(path:string, filename:string){
+        if(await this.configFileExists(filename)){
+            throw new Error(`Config file [${filename}] already exists`)
+        }
+        if(!await this.canReadFrom(path)){
+            throw new Error(`Cannot read from source path [${path}]`)
+        }
+        let result = shelljs.ln('-s',path,join(this.configDir,filename))
+
+        return result.code === 0;
+    }
 
     findConfigForGroup(group: string) {
         let config = this.files.find(f => {
@@ -37,7 +76,7 @@ export class SupervisorFiles {
         if(!await canWriteTo(config.path)) throw new Error(`No write access to ${config.path}`);
         await fs.writeFile(config.path,content,'utf8')
         await this.reload()
-        return {success:true}
+        return true
     }
 
     // get directoryPaths():string[]{return this.config.supervisor.server.configurationDirectoryPaths    }
@@ -55,6 +94,7 @@ export class SupervisorFiles {
         const configFileContent = await fs.readFile(this.filePath, 'utf8');
         this.config             = parse(configFileContent);
         const globs             = this.config.include.files.split(' ');
+        this.configDir = dirname(globs[0]);
         const paths             = await globby(globs);
         this.files             = await Promise.all(paths.map(async path => {
             const content = await fs.readFile(path, 'utf8');

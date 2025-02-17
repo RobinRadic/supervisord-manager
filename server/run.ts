@@ -1,4 +1,5 @@
 import {config} from 'dotenv';
+import { groupBy } from 'lodash-es';
 import { fileURLToPath } from 'node:url';
 import {dirname ,join} from 'path';
 import { Server } from './Server.js';
@@ -11,7 +12,7 @@ path:join(_dirname,'..','.env')
 })
 
 async function run() {
-
+let encodedPath = encodeURIComponent(_dirname);
     const config = {
         port: parseInt(process.env.SERVER_PORT),
         supervisor: {
@@ -27,11 +28,26 @@ async function run() {
     };
     const server = Server.create(config);
     const di     = server.di;
-    const state  = await di.supervisor.state();
-    await di.supervisor.api.reloadConfig();
-    const log2 = await di.supervisor.api.readLog(- 1000, 0);
-    const log  = await di.supervisor.api.readProcessStdoutLog('supervisor-rest-server:supervisor-rest-server_00', - 1000, 0);
-    return { ...state, log };
+    const state  = await di.supervisor.status();
+    const configs  = await di.supervisor.fs.getAllConfig();
+    let groups = {}
+    configs.files.forEach(f => {
+        Object.keys(f.config).forEach(key => {
+            let name = key.replace('program:','')
+            groups[name] = f.config[key]
+            groups[name].hasProcesses = false;
+            groups[name].name = name;
+        })
+    })
+    Object.entries(groupBy(state.processes,'group')).forEach(([group, processes]) => {
+        groups[group].hasProcesses = processes.length > 0
+        groups[group].processes = processes
+    })
+    Object.entries(groupBy(state.configs,'group')).map(([group, configs]) => {
+        groups[group].configs = configs;
+    })
+    let result = Object.values(groups);
+    return { ...state,groups };
 }
 
 run();

@@ -23,6 +23,8 @@ export interface Configuration {
             configurationFilePath?: string;
         }
     };
+    allowed_ips?:string[]
+    users?:Array<{name:string,email:string,password:string}>
 }
 
 export class Server {
@@ -51,7 +53,7 @@ export class Server {
             app.use(bodyParser.text());
             app.use(bodyParser.json());
             app.use(bodyParser.urlencoded({ extended: true }));
-
+            app.set('trust proxy', true)
             return app;
         });
         this.di.bind('router').toConstantValue(express.Router());
