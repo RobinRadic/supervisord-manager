@@ -1,4 +1,4 @@
-import type { ConfigInfo, ProcessInfo, State } from 'node-supervisord/dist/interfaces.js';
+import type { ConfigInfo, ProcessInfo } from 'node-supervisord/dist/interfaces.js';
 import type { ConfigResponse, Group } from '../../../shared/api.js';
 
 
@@ -10,7 +10,19 @@ export interface SupervisorData {
     configs: ConfigInfo[];
     processes: ProcessInfo[];
     identification?: string;
-    state?: State;
+    state?: {
+        statecode: number;
+        statename: string;
+    };
     methods: string[];
-    groups:Group
+    groups: Group;
+}
+
+export interface MeResponseData {
+    success: boolean;
+    error?: string;
+    user?: {
+        email: string
+        name: string
+    };
 }

@@ -1,10 +1,11 @@
 import { config } from 'dotenv';
 import { fileURLToPath } from 'node:url';
 import { dirname, join } from 'path';
-import { FileController } from './controllers/FileController.js';
+import { ApiFilesController } from './controllers/ApiFilesController.js';
+import { ApiController } from './controllers/ApiController.js';
 import { RootController } from './controllers/RootController.js';
 import { Server } from './Server.js';
-
+import configData from '../config.json'
 const _dirname = dirname(fileURLToPath(import.meta.url))
 
 config({
@@ -14,7 +15,8 @@ config({
 
 Server.registerControllers([
     RootController,
-    FileController
+    ApiController,
+    ApiFilesController
 ]);
 
 Server.run({
@@ -29,4 +31,5 @@ Server.run({
             configurationFilePath: process.env.SUPERVISOR_CONFIG_PATH,
         },
     },
+    ...configData
 });

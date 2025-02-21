@@ -8,12 +8,21 @@ import { setupLayouts } from 'virtual:generated-layouts';
 // Composables
 import { createRouter, createWebHistory } from 'vue-router/auto';
 import { routes } from 'vue-router/auto-routes';
+import { useAuth } from '../plugins/auth.js';
 
 
 const router = createRouter({
     history: createWebHistory(import.meta.env.BASE_URL),
     routes: setupLayouts(routes),
 });
+
+
+router.beforeEach((to, from, next) => {
+    if(useAuth().loggedIn.value === false && to.name !== '/login'){
+        return next('/login')
+    }
+    next();
+})
 
 // Workaround for https://github.com/vitejs/vite/issues/11804
 router.onError((err, to) => {

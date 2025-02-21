@@ -1,16 +1,7 @@
 <template>
-    <v-app class="rounded rounded-md">
-        <!--        <v-system-bar :color="layoutColors.systembar"></v-system-bar>-->
-
-        <!--        <v-navigation-drawer color="grey-darken-2"            width="72"            permanent        ></v-navigation-drawer>-->
-
-        <v-app-bar
-            :color="layoutColors.appbarTop"
-            height="48"
-            flat
-        ></v-app-bar>
-
+    <v-app v-if="loaded">
         <v-navigation-drawer
+            v-if="auth.loggedIn.value"
             :color="layoutColors.sidebarLeft"
             width="256"
             class="r-layout__sidebar"
@@ -19,8 +10,8 @@
             <v-list>
                 <v-list-item
                     prepend-avatar="https://cdn.vuetifyjs.com/images/john.png"
-                    subtitle="john@google.com"
-                    title="John Leider"
+                    :subtitle="auth.user.value.email"
+                    :title="auth.user.value.name"
                 >
                     <template v-slot:append>
 
@@ -56,21 +47,6 @@
             </v-list>
         </v-navigation-drawer>
 
-        <!--
-                <v-navigation-drawer
-                    :color="layoutColors.sidebarRight"
-                    location="right"
-                    width="150"
-                    permanent
-                ></v-navigation-drawer>
-                <v-app-bar
-                    :color="layoutColors.appbarBottom"
-                    height="48"
-                    location="bottom"
-                    flat
-                ></v-app-bar>
-        -->
-
         <v-main class="r-layout__main d-flex align-center justify-center" style="min-height: 300px;">
             <v-app-bar
                 :color="layoutColors.appbarInnerTop"
@@ -105,12 +81,31 @@
 </template>
 
 <script lang="ts" setup>
+
+
 import useAppBarComponents from '@/composables/useAppBarComponents.js';
 import type { MdiIconName } from '@/types/icons.js';
 import { useRouter } from 'vue-router';
 import { VBadge, VList, VListItem } from 'vuetify/components';
 import { useBreadcrumbs } from '@/composables/useBreadcrumbs.js';
+import { useAuth } from '../plugins/auth.js';
+import { useSupervisor } from '@/plugins/supervisor/index.js';
 
+const supervisor = useSupervisor();
+const loaded     = ref(false);
+
+Promise.all([
+    supervisor.updateConfig(),
+    supervisor.updateStatus(),
+]).then(() => {
+    loaded.value = true;
+});
+
+setInterval(() => {
+    supervisor.updateStatus();
+}, 5000);
+
+const auth = useAuth()
 const {registerBreadcrumbs,breadcrumbs} = useBreadcrumbs()
 registerBreadcrumbs({
     index: { title: 'Supervisord Manager', path: '/' },

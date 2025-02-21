@@ -1,9 +1,9 @@
-
 // Plugins
 import Vue from '@vitejs/plugin-vue';
 import { config } from 'dotenv';
 import { fileURLToPath, URL } from 'node:url';
 import { dirname, join } from 'path';
+import type { Options as SassOptions } from 'sass';
 import AutoImport from 'unplugin-auto-import/vite';
 import Fonts from 'unplugin-fonts/vite';
 import Components from 'unplugin-vue-components/vite';
@@ -14,14 +14,15 @@ import { defineConfig } from 'vite';
 import Layouts from 'vite-plugin-vue-layouts';
 import Vuetify, { transformAssetUrls } from 'vite-plugin-vuetify';
 
-const _dirname = dirname(fileURLToPath(import.meta.url))
+const _dirname = dirname(fileURLToPath(import.meta.url));
 
 config({
-    debug:true,
-    path:join(_dirname,'.env')
-})
+    debug: true,
+    path: join(_dirname, '.env'),
+});
 
 console.log('process.env.SERVER_PORT', process.env.SERVER_PORT);
+
 
 // https://vitejs.dev/config/
 export default defineConfig({
@@ -44,6 +45,17 @@ export default defineConfig({
             '.vue',
         ],
     },
+
+    build:{
+
+rollupOptions:{
+
+    output:{
+        entryFileNames:'assets/index.js',
+        assetFileNames: `assets/[name].[ext]`,
+    }
+}
+    },
     server: {
         port: 3000,
         // https:true
@@ -58,8 +70,8 @@ export default defineConfig({
             sass: {
                 api: 'modern-compiler',
                 silenceDeprecations: [ 'global-builtin', 'import', 'color-functions', 'legacy-js-api', 'mixed-decls' ],
-
-            },
+                quietDeps: true,
+            } as SassOptions,
         },
     },
     plugins: [

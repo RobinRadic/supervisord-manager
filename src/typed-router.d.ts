@@ -23,6 +23,7 @@ declare module 'vue-router/auto-routes' {
     '/dashboard': RouteRecordInfo<'/dashboard', '/dashboard', Record<never, never>, Record<never, never>>,
     '/dashboard2': RouteRecordInfo<'/dashboard2', '/dashboard2', Record<never, never>, Record<never, never>>,
     '/edit/[group]': RouteRecordInfo<'/edit/[group]', '/edit/:group', { group: ParamValue<true> }, { group: ParamValue<false> }>,
+    '/login': RouteRecordInfo<'/login', '/login', Record<never, never>, Record<never, never>>,
     '/logs/[group]': RouteRecordInfo<'/logs/[group]', '/logs/:group', { group: ParamValue<true> }, { group: ParamValue<false> }>,
     '/settings': RouteRecordInfo<'/settings', '/settings', Record<never, never>, Record<never, never>>,
   }

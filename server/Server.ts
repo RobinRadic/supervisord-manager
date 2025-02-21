@@ -1,15 +1,21 @@
 import { defaults } from '@radicjs/utils';
+
+import bodyParser from 'body-parser';
 import cors from 'cors';
 import express from 'express';
+import session from 'express-session';
 import { SupervisordClient, SupervisordClientOptions } from 'node-supervisord';
+import { dirname } from 'node:path';
+import { fileURLToPath } from 'node:url';
+import { join } from 'path';
 import { Container } from './Container.js';
 import { attachControllers, ERROR_MIDDLEWARE } from './decorators';
 import { ErrorMiddleware } from './middleware/ErrorMiddleware.js';
-import { LogRequestMiddleware } from './middleware/LogRequestMiddleware.js';
 import { Supervisor } from './services/Supervisor.js';
 import { SupervisorFiles } from './services/SupervisorFiles.js';
+import cookieParser from 'cookie-parser'
 
-import bodyParser from 'body-parser';
+const _dirname = dirname(fileURLToPath(import.meta.url));
 
 export interface SupervisorClientConfiguration extends SupervisordClientOptions {
     host: string;
@@ -23,8 +29,8 @@ export interface Configuration {
             configurationFilePath?: string;
         }
     };
-    allowed_ips?:string[]
-    users?:Array<{name:string,email:string,password:string}>
+    allowed_ips?: string[];
+    users?: Array<{ name: string, email: string, password: string }>;
 }
 
 export class Server {
@@ -45,21 +51,38 @@ export class Server {
                     configurationFilePath: '/etc/supervisor/supervisord.conf',
                 },
             },
+            users: []
         });
         this.di.bind('config').toConstantValue(options);
         this.di.bind('app').toConstantValue(express()).onActivation((ctx, app: express.Express) => {
             app.use(ctx.container.get('router'));
-            app.use(cors());
+            app.use(cors({
+                origin:[
+                    'http://localhost:3000',
+                    'http://localhost:' + options.port,
+                ],
+                credentials:true
+            }));
+            app.use(cookieParser())
             app.use(bodyParser.text());
             app.use(bodyParser.json());
             app.use(bodyParser.urlencoded({ extended: true }));
-            app.set('trust proxy', true)
+            app.set('trust proxy', true);
+            app.use('/assets', express.static(join(_dirname, '..', 'dist/assets')));
+            app.set('views', join(_dirname, 'views'));
+            app.set('view engine', 'hbs');
+            app.use(express.urlencoded({ extended: false }))
+            app.use(session({
+                secret: 'foobar',
+                resave: true,
+                saveUninitialized: true
+            }));
             return app;
         });
         this.di.bind('router').toConstantValue(express.Router());
         this.di.bind(Supervisor).toSelf().inSingletonScope();
         this.di.bind(SupervisorFiles).toSelf().inSingletonScope().onActivation((ctx, config: SupervisorFiles) => {
-          config.reload()
+            config.reload();
             return config;
         });
         this.di.bind(SupervisordClient).toDynamicValue(ctx => {

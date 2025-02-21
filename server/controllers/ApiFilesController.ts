@@ -1,12 +1,13 @@
 import type e from 'express';
 import { inject } from 'inversify';
 import { Controller, Get, Params, Post, Request, Response } from '../decorators';
+import { AuthMiddleware } from '../middleware/AuthMiddleware.js';
 import { LogRequestMiddleware } from '../middleware/LogRequestMiddleware.js';
 import { Supervisor } from '../services/Supervisor.js';
 import { BaseController } from './BaseController.js';
 
-@Controller('/files', [ LogRequestMiddleware ])
-export class FileController extends BaseController {
+@Controller('/api/files', [ AuthMiddleware,LogRequestMiddleware ])
+export class ApiFilesController extends BaseController {
     @inject(Supervisor) supervisor: Supervisor;
 
     @Get('/exists/:path')

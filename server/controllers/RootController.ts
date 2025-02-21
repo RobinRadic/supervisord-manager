@@ -1,116 +1,90 @@
 import type e from 'express';
-import {inject } from 'inversify';
-import { groupBy } from 'lodash-es';
-import { Response, Controller, Get, Params,Request, Post } from '../decorators';
+import { inject } from 'inversify';
+import { Controller, Get, Post, Request, Response } from '../decorators';
 import { LogRequestMiddleware } from '../middleware/LogRequestMiddleware.js';
+import type { Configuration } from '../Server.js';
 import { Supervisor } from '../services/Supervisor.js';
 import { BaseController } from './BaseController.js';
 
-@Controller('/',[LogRequestMiddleware])
+@Controller('/', [ LogRequestMiddleware ])
 export class RootController extends BaseController {
     @inject(Supervisor) supervisor: Supervisor;
+    @inject('config') config: Configuration;
 
     @Get('/')
-    async index() {
-       let pid = await this.supervisor.api.getPID();
-        return `Hello World
-pid: ${pid}
-        `;
-    }
-
-    @Get('/full')
-    async full(@Response() res:e.Response) {
-        return this.supervisor.status();
-    }
-
-    @Get('/status')
-    async status(@Response() res:e.Response) {
-        return this.supervisor.status();
-    }
-
-    @Get('/reload')
-    async reload(@Response() res:e.Response) {
-        return this.supervisor.reload();
-    }
-
-    @Get('/state')
-    async state(@Response() res:e.Response) {
-        return this.supervisor.api.getState()
-    }
-
-    @Get('/restart')
-    async restart(@Response() res:e.Response) {
-        return this.supervisor.api.restart()
-    }
-
-    @Get('/shutdown')
-    async shutdown(@Response() res:e.Response) {
-        return this.supervisor.api.shutdown()
-    }
-
-
-    @Get('/add-process-group/:name')
-    async addProcessGroup(@Response() res:e.Response, @Params('name') name:string) {
-        return this.supervisor.api.addProcessGroup(name);
-    }
-
-    @Get('/remove-process-group/:name')
-    async removeProcessGroup(@Response() res:e.Response, @Params('name') name:string) {
-        return this.supervisor.api.removeProcessGroup(name);
-    }
-
-    @Get('/start-process-group/:name')
-    async startProcessGroup(@Response() res:e.Response, @Params('name') name:string) {
-        return this.supervisor.api.startProcessGroup(name);
-    }
-
-    @Get('/start-process/:name')
-    async startProcess(@Response() res:e.Response, @Params('name') name:string) {
-        return this.supervisor.api.startProcess(name);
-    }
-
-    @Get('/stop-process/:name')
-    async stopProcess(@Response() res:e.Response, @Params('name') name:string) {
-        return this.supervisor.api.stopProcess(name);
-    }
-
-    @Get('/start-all-processes')
-    async startAll(@Response() res:e.Response) {
-        return this.supervisor.api.startAllProcesses()
-    }
-
-    @Get('/stop-all-processes')
-    async stopAll(@Response() res:e.Response) {
-        return this.supervisor.api.stopAllProcesses()
-    }
-
-
-    @Get('/log/:offset/:length')
-    async log(
-        @Response() res:e.Response,
-        @Request() req:e.Request,
-        @Params('offset') offset: number,
-        @Params('length') length: number ) {
-        return this.supervisor.api.readLog(offset, length)
-    }
-
-    @Get('/process-out-log/:name/:offset/:length')
-    async processStdoutLog(
-        @Response() res:e.Response,
-        @Request() req:e.Request,
-        @Params('name') name: string,
-        @Params('offset') offset: number,
-        @Params('length') length: number
+    async index(
+        @Response() res: e.Response,
+        @Request() req: e.Request,
     ) {
-        return this.supervisor.api.readProcessStdoutLog(name,offset, length)
+
+        const data = {
+            title: 'Supervisord Manager',
+        };
+        res.render('index', data);
     }
-    @Get('/process-err-log/:name/:offset/:length')
-    async processStderrLog(
-        @Response() res:e.Response,
-        @Request() req:e.Request,
-        @Params('name') name: string,
-        @Params('offset') offset: number,
-        @Params('length') length: number ) {
-        return this.supervisor.api.readProcessStderrLog(name,offset, length)
+
+    @Post('/login')
+    async login(
+        @Response() res: e.Response,
+        @Request() req: e.Request,
+    ) {
+
+        if ( !req.body.email || !req.body.password ) {
+            return this.respondWithError('No email or password set');
+        }
+        let user = this.config.users.find(user => user.email === req.body.email && user.password === req.body.password);
+        if ( user ) {
+            req.session[ 'user' ] = user;
+            await new Promise((resolve, reject) => {
+
+                // regenerate the session, which is good practice to help
+                // guard against forms of session fixation
+                req.session.regenerate(function (err) {
+                    if (err) reject(err)
+
+                    // store user information in session, typically a user id
+                    req.session[ 'user' ] = user;
+
+                    // save the session before redirection to ensure page
+                    // load does not happen before session is saved
+                    req.session.save(function (err) {
+                        if (err) return reject(err)
+                        resolve(user);
+                    })
+                })
+            });
+            return this.respondWithSuccess({ user: { email: user.email, name: user.name } });
+
+        }
+        return this.respondWithError('Invalid credentials');
+    }
+
+    @Get('/logout')
+    async logout(
+        @Response() res: e.Response,
+        @Request() req: e.Request,
+    ) {
+        req.session.destroy(error => {
+            if (error) {
+                return res.json({ success: false, error });
+            }
+            return res.json({ success: true });
+        });
+    }
+
+    @Get('/me')
+    async me(
+        @Response() res: e.Response,
+        @Request() req: e.Request,
+    ) {
+
+        if ( !req.session[ 'user' ] ) {
+            return this.respondWithError('Not logged in');
+        }
+        let user = this.config.users.find(user => user.email === req.session[ 'user' ].email);
+        if ( user ) {
+            return this.respondWithSuccess({ user: { email: user.email, name: user.name } });
+        }
+        return this.respondWithError('Unknown error');
     }
 }

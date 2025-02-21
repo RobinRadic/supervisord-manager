@@ -22,6 +22,6 @@ declare module 'vue' {
     Processes: typeof import('./components/Processes.vue')['default']
     RouterLink: typeof import('vue-router')['RouterLink']
     RouterView: typeof import('vue-router')['RouterView']
-    SupervisorAction: typeof import('./components/SupervisorAction.vue')['default']
+    'Test.ce': typeof import('./components/Test.ce.vue')['default']
   }
 }
