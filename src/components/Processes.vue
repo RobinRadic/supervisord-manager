@@ -1,5 +1,4 @@
 <script lang="ts" setup>
-import { useCodeDialog } from '@/composables/useCodeDialog.js';
 import { useSupervisor, useSupervisorActionHandler } from '@/plugins/supervisor/index.js';
 import { strStripLeft } from '@radicjs/utils';
 import dayjs from 'dayjs';
@@ -39,7 +38,6 @@ if(props.compact){
     )
 }
 
-const createCodeDialog = useCodeDialog();
 
 const handlers = {
     start: async (name: string) => actions.startProcess(name),
@@ -64,10 +62,10 @@ const getStatenameChipColor = (state: string) => {//@formatter:off
 
 
 <template>
-
     <v-data-table
         :headers="headers"
         :items="items"
+
         width="700px"
         item-value="name"
         hover
@@ -97,5 +95,4 @@ const getStatenameChipColor = (state: string) => {//@formatter:off
             <v-btn prepend-icon="mdi-label" color="info" size="small" :to="'/logs/' + item.group +':'+item.name">Logs</v-btn>
         </template>
     </v-data-table>
-
 </template>

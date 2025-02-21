@@ -1,5 +1,5 @@
 import { objectify, strStripLeft } from '@radicjs/utils';
-import { promises as fs } from 'fs';
+import { promises as fs, writeFileSync } from 'fs';
 import { globby } from 'globby';
 import { parse } from 'ini';
 import {dirname,join } from 'path';
@@ -61,6 +61,20 @@ export class SupervisorFiles {
         let result = shelljs.ln('-s',path,join(this.configDir,filename))
 
         return result.code === 0;
+    }
+    async create( filename:string, content:string){
+        if(await this.configFileExists(filename)){
+            throw new Error(`Config file [${filename}] already exists`)
+        }
+        writeFileSync(join(this.configDir,filename), content,  'utf-8')
+        return true;
+    }
+    async delete( filename:string ){
+        if(!await this.configFileExists(filename)){
+            throw new Error(`Config file [${filename}] does not exists`)
+        }
+        shelljs.rm('-f',join(this.configDir,filename))
+        return true;
     }
 
     findConfigForGroup(group: string) {

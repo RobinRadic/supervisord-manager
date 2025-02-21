@@ -1,5 +1,5 @@
 <template>
-    <v-card class="mx-auto" width="400">
+    <v-card class="mx-auto align-center justify-center" width="400">
         <v-toolbar color="accent">
             <v-icon icon="mdi-plus" style="margin-left:10px" />
             <v-toolbar-title>Create a new configuration</v-toolbar-title>

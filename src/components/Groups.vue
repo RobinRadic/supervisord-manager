@@ -3,35 +3,19 @@ import { useSupervisor, useSupervisorActionHandler } from '@/plugins/supervisor/
 import { strStripLeft } from '@radicjs/utils';
 import dayjs from 'dayjs';
 import dayjsRelativeTime from 'dayjs/plugin/relativeTime';
-import { groupBy } from 'lodash';
-import type { ConfigInfo, ProcessInfo } from 'node-supervisord/dist/interfaces.js';
 //@ts-ignore
 import type { DataTableHeader } from 'vuetify/dist/vuetify.d.ts';
 import type { Group } from '../../shared/api.js';
 import { ProcessState } from '../../shared/ProcessState.js';
 
 dayjs.extend(dayjsRelativeTime);
-const props              = defineProps<{
+const props               = defineProps<{
     compact?: boolean
-    groups:Group[]
+    groups: Group[]
 }>();
-const supervisor         = useSupervisor();
-const actions            = useSupervisorActionHandler();
-const items: Ref<Group[]> = toRef(props,'groups')
-
-const headers: DataTableHeader[] = [];
-
-if ( props.compact ) {
-    headers.push(
-        { title: 'Name', key: 'name' },
-        { title: 'Actions', key: 'actions', sortable: false },
-    );
-} else {
-    headers.push(
-        { title: 'Name', key: 'name' },
-        { title: 'Actions', key: 'actions', sortable: false },
-    );
-}
+const supervisor          = useSupervisor();
+const actions             = useSupervisorActionHandler();
+const items: Ref<Group[]> = toRef(props, 'groups');
 
 const handlers              = {
     start: async (name: string) => actions.startProcess(name),
@@ -49,7 +33,7 @@ const handlers              = {
             return;
         }
     },
-    delete: () => console.log('delete'),
+    delete: async (groupName: string) =>  actions.delete(groupName),
     logs: () => console.log('logs'),
     add: async (name) => actions.addProcessGroup(name),
     remove: async (name) => actions.removeProcessGroup(name),
@@ -66,8 +50,8 @@ const getStatenameChipColor = (state: string) => {//@formatter:off
 
 
 <template>
-    <v-expansion-panels  variant="accordion">
-        <v-expansion-panel v-for="(group,igroup) in groups" :key="igroup">
+    <v-expansion-panels variant="accordion">
+        <v-expansion-panel class="bg-blue-grey-darken-4" v-for="(group,igroup) in groups" :key="igroup">
             <v-expansion-panel-title v-slot="{expanded}"
                                      :expand-icon="group.hasProcesses ? 'mdi-chevron-down' : 'none'"
                                      :collapse-icon="group.hasProcesses ? 'mdi-chevron-up' : 'none'"
@@ -81,13 +65,15 @@ const getStatenameChipColor = (state: string) => {//@formatter:off
                                color="primary"
                                size="small"
                                :to="'/edit/' + group.name"
-                        >Edit</v-btn>
+                        >Edit
+                        </v-btn>
 
                         <v-btn prepend-icon="mdi-delete"
                                color="error"
                                size="small"
                                @click="() => handlers.delete(group.name)"
-                        >Delete</v-btn>
+                        >Delete
+                        </v-btn>
 
                         <template v-if="group.hasProcesses">
                             <v-btn v-if="[ProcessState.RUNNING,ProcessState.STARTING].includes(group?.processes?.[0].state)"
@@ -95,32 +81,36 @@ const getStatenameChipColor = (state: string) => {//@formatter:off
                                    color="warning"
                                    size="small"
                                    @click="() => handlers.stop(group.name)"
-                            >Stop</v-btn>
+                            >Stop
+                            </v-btn>
                             <v-btn v-else
                                    prepend-icon="mdi-play"
                                    color="success"
                                    size="small"
                                    @click="() => handlers.start(group.name)"
-                            >Start</v-btn>
+                            >Start
+                            </v-btn>
                             <v-btn prepend-icon="mdi-minus"
                                    color="error"
                                    size="small"
                                    @click="() => handlers.remove(group.name)"
-                            >Remove processes</v-btn>
+                            >Remove processes
+                            </v-btn>
                         </template>
                         <template v-else>
                             <v-btn prepend-icon="mdi-plus"
                                    color="success"
                                    size="small"
                                    @click="() => handlers.add(group.name)"
-                            >Add process</v-btn>
+                            >Add process
+                            </v-btn>
                         </template>
                     </v-col>
 
                 </v-row>
             </v-expansion-panel-title>
-            <v-expansion-panel-text v-if="group.hasProcesses">
-                <Processes :items="group.processes" />
+            <v-expansion-panel-text class="bg-blue-grey-darken-3" v-if="group.hasProcesses">
+                <Processes class="bg-blue-grey-darken-3" :items="group.processes"/>
             </v-expansion-panel-text>
         </v-expansion-panel>
     </v-expansion-panels>

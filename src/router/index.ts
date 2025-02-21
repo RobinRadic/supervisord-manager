@@ -17,7 +17,8 @@ const router = createRouter({
 });
 
 
-router.beforeEach((to, from, next) => {
+router.beforeResolve((to, from, next) => {
+    console.log('auth guard', 'loggedIn:',useAuth().loggedIn.value,to)
     if(useAuth().loggedIn.value === false && to.name !== '/login'){
         return next('/login')
     }

@@ -14,7 +14,7 @@ import { ErrorMiddleware } from './middleware/ErrorMiddleware.js';
 import { Supervisor } from './services/Supervisor.js';
 import { SupervisorFiles } from './services/SupervisorFiles.js';
 import cookieParser from 'cookie-parser'
-
+import createFilestore from 'session-file-store'
 const _dirname = dirname(fileURLToPath(import.meta.url));
 
 export interface SupervisorClientConfiguration extends SupervisordClientOptions {
@@ -29,6 +29,7 @@ export interface Configuration {
             configurationFilePath?: string;
         }
     };
+    secret?:string
     allowed_ips?: string[];
     users?: Array<{ name: string, email: string, password: string }>;
 }
@@ -51,6 +52,7 @@ export class Server {
                     configurationFilePath: '/etc/supervisor/supervisord.conf',
                 },
             },
+            secret: 'foobar',
             users: []
         });
         this.di.bind('config').toConstantValue(options);
@@ -68,15 +70,16 @@ export class Server {
             app.use(bodyParser.json());
             app.use(bodyParser.urlencoded({ extended: true }));
             app.set('trust proxy', true);
-            app.use('/assets', express.static(join(_dirname, '..', 'dist/assets')));
+            app.use('/assets', express.static(join(_dirname, '..', 'dist/frontend/assets')));
             app.set('views', join(_dirname, 'views'));
             app.set('view engine', 'hbs');
-            app.use(express.urlencoded({ extended: false }))
-            app.use(session({
-                secret: 'foobar',
-                resave: true,
-                saveUninitialized: true
-            }));
+            app.use(express.urlencoded({ extended: true }))
+            const Filestore = createFilestore(session)
+
+            app.use((req, res, next) => {
+                res.header("Access-Control-Allow-Headers", "x-access-token, Origin, Content-Type, Accept");
+                next();
+            })
             return app;
         });
         this.di.bind('router').toConstantValue(express.Router());

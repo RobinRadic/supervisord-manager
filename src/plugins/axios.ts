@@ -6,7 +6,7 @@ declare const __SERVER_PORT__: number;
 
 export default function axiosPlugin(options:CreateAxiosDefaults={}){
     options = defaults(options, {
-       baseURL: 'http://localhost:' + __SERVER_PORT__,
+       baseURL: 'http://localhost:' + window.SERVER_PORT,
     });
     const instance = Axios.create(options);
     console.log('axiosPlugin')

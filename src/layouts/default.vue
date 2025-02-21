@@ -1,7 +1,6 @@
 <template>
-    <v-app v-if="loaded">
+    <v-layout v-if="loaded && auth.loggedIn">
         <v-navigation-drawer
-            v-if="auth.loggedIn.value"
             :color="layoutColors.sidebarLeft"
             width="256"
             class="r-layout__sidebar"
@@ -12,15 +11,7 @@
                     prepend-avatar="https://cdn.vuetifyjs.com/images/john.png"
                     :subtitle="auth.user.value.email"
                     :title="auth.user.value.name"
-                >
-                    <template v-slot:append>
-
-                        <v-btn
-                            icon="mdi-chevron-left"
-                            variant="text"
-                        ></v-btn>
-                    </template>
-                </v-list-item>
+                />
             </v-list>
 
             <v-divider></v-divider>
@@ -47,7 +38,7 @@
             </v-list>
         </v-navigation-drawer>
 
-        <v-main class="r-layout__main d-flex align-center justify-center" style="min-height: 300px;">
+        <v-main class="r-layout__main d-flex align-center justify-center" height="100vh">
             <v-app-bar
                 :color="layoutColors.appbarInnerTop"
                 height="48"
@@ -76,8 +67,7 @@
         </v-main>
 
         <AppFooter :color="layoutColors.footer"/>
-
-    </v-app>
+    </v-layout>
 </template>
 
 <script lang="ts" setup>
@@ -91,6 +81,7 @@ import { useBreadcrumbs } from '@/composables/useBreadcrumbs.js';
 import { useAuth } from '../plugins/auth.js';
 import { useSupervisor } from '@/plugins/supervisor/index.js';
 
+const auth = useAuth()
 const supervisor = useSupervisor();
 const loaded     = ref(false);
 
@@ -105,7 +96,6 @@ setInterval(() => {
     supervisor.updateStatus();
 }, 5000);
 
-const auth = useAuth()
 const {registerBreadcrumbs,breadcrumbs} = useBreadcrumbs()
 registerBreadcrumbs({
     index: { title: 'Supervisord Manager', path: '/' },
@@ -136,6 +126,7 @@ const sidebarItems: SidebarItem[] = [
     // { type: 'subheader', title: 'Group 1' },
     { value: 'dashboard', title: 'Dashboard', icon: 'mdi-view-dashboard', to: '/dashboard' },
     { value: 'settings', title: 'Settings', icon: 'mdi-wrench', to: '/settings' },
+    { value: 'logout', title: 'Logout', icon: 'mdi-power-standby', to: '/logout' },
     // { type: 'divider' },
     // { type: 'subheader', title: 'Modules' },
     // {

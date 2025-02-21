@@ -1,5 +1,11 @@
 import type { ConfigInfo, ProcessInfo, State } from 'node-supervisord/dist/interfaces.js';
 
+export interface User {
+    email:string
+    name:string
+    accessToken:string
+}
+
 export interface StatusResponse {
     version: string;
     apiVersion: string;

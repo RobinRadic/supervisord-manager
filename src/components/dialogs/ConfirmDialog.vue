@@ -1,12 +1,12 @@
 <script lang="ts" setup>
-const dialog  = ref(null)
+const dialog = ref(null);
 
-const props = defineProps({
-    message: String,
-    title:String
-});
+const props = defineProps<{
+    message: string
+    title: string
+}>();
 
-const emit = defineEmits(['confirm', 'close']);
+const emit = defineEmits([ 'confirm', 'close' ]);
 
 const isActive = ref(false);
 

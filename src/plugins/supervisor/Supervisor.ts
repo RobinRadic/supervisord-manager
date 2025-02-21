@@ -1,16 +1,19 @@
-import type { MeResponseData, SupervisorData } from '@/plugins/supervisor/types.js';
-import { strStripLeft } from '@radicjs/utils';
+import type { SupervisorData } from '@/plugins/supervisor/types.js';
+import { merge, strStripLeft } from '@radicjs/utils';
 import type { AxiosInstance, AxiosRequestConfig, AxiosResponse } from 'axios';
 import { groupBy } from 'lodash-es';
 import type { FullResponse, Group, StatusResponse } from '../../../shared/api.js';
+import { type Auth, useAuth } from '../auth.js';
 
 export class Supervisor {
     public data: SupervisorData;
     public groups: ComputedRef<Group[]>;
+    private auth: Auth;
 
     constructor(
         private axios: AxiosInstance,
     ) {
+        this.auth = useAuth();
         this.data = reactive({
             config: null,
             files: [],
@@ -52,12 +55,12 @@ export class Supervisor {
         });
     }
 
-    async get<T = any, R = AxiosResponse<T>, D = any>(url: string, config: AxiosRequestConfig<D>={}): Promise<R> {
-        return this.axios.get('/api' + url, {withCredentials:true,...config});
+    async get<T = any, R = AxiosResponse<T>, D = any>(url: string, config: AxiosRequestConfig<D> = {}): Promise<R> {
+        return this.axios.get('/api' + url, merge({ headers: this.auth.authHeader() }, config));
     }
 
-    async post<T = any, R = AxiosResponse<T>, D = any>(url: string, data?: D, config: AxiosRequestConfig<D>={}): Promise<R> {
-        return this.axios.post('/api' + url, data, {withCredentials:true,...config});
+    async post<T = any, R = AxiosResponse<T>, D = any>(url: string, data?: D, config: AxiosRequestConfig<D> = {}): Promise<R> {
+        return this.axios.post('/api' + url, data, merge({ headers: this.auth.authHeader() }, config));
     }
 
 
@@ -156,6 +159,15 @@ export class Supervisor {
 
     async link(path: string, filename: string) {
         const res = await this.post('/files/link', { path, filename });
+        return res.status;
+    }
+
+    async create(filename: string, content: string) {
+        const res = await this.post('/files/config', { content, filename });
+        return res.status;
+    }
+    async delete(filename: string) {
+        const res = await this.post('/files/delete', { filename });
         return res.status;
     }
 

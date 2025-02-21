@@ -2,6 +2,8 @@ import { type AlertCreateFn, useAlerts } from '@/composables/useAlerts.js';
 import { useLoaderDialog } from '@/composables/useLoaderDialog.js';
 import type { Supervisor } from '@/plugins/supervisor/Supervisor.js';
 import { useSupervisor } from '@/plugins/supervisor/useSupervisor.js';
+import { strStripLeft } from '@radicjs/utils';
+import { useConfirmDialog } from '../../composables/useConfirmDialog.js';
 
 export function useSupervisorActionHandler() {
     const supervisor = useSupervisor();
@@ -89,6 +91,37 @@ export class SupervisorActionHandler {
             await this.supervisor.updateStatus();
             destroy();
             this.createAlert('success','Reloaded', 'Supervisor has been reloaded', 4000)
+            return true;
+        } catch (e) {
+            this.createAlert('error','Error',e.response?.data?.error||e.message,alertTimeout);
+        }
+        destroy();
+        return false;
+    }
+    async delete(groupName:string) {
+        const confirm = useConfirmDialog()
+        const confirmed = await confirm({
+            title: 'Are you sure?',
+            message: 'Are you sure you want top delete this?'
+        })
+        if(!confirmed){
+            return false
+        }
+        const destroy = this.createLoader({ message: `Deleting config...` });
+
+        let config = this.supervisor.data.files.find(f => {
+            return Object.keys(f.config).map(key => strStripLeft(key, 'program:')).find(k => k === groupName) !== undefined;
+        });
+        if ( !config ) {
+            this.createAlert('error','Error','Could not resolve group into filename',alertTimeout)
+            return false;
+        }
+        try {
+            const response = await this.supervisor.delete (config.path.split('/').pop());
+            await this.supervisor.reload()
+            await this.supervisor.updateStatus();
+            destroy();
+            this.createAlert('success','Added', 'Config has been removed', 4000)
             return true;
         } catch (e) {
             this.createAlert('error','Error',e.response?.data?.error||e.message,alertTimeout);

@@ -6,7 +6,7 @@ import { LogRequestMiddleware } from '../middleware/LogRequestMiddleware.js';
 import { Supervisor } from '../services/Supervisor.js';
 import { BaseController } from './BaseController.js';
 
-@Controller('/api/files', [ AuthMiddleware,LogRequestMiddleware ])
+@Controller('/api/files', [ AuthMiddleware, LogRequestMiddleware ])
 export class ApiFilesController extends BaseController {
     @inject(Supervisor) supervisor: Supervisor;
 
@@ -26,19 +26,31 @@ export class ApiFilesController extends BaseController {
         @Response() res: e.Response,
         @Request() req: e.Request,
     ) {
-        return {success: await this.supervisor.fs.link(req.body.path, req.body.filename)};
+        return { success: await this.supervisor.fs.link(req.body.path, req.body.filename) };
     }
 
 
     @Post('/config/:group')
-    async saveConfig(@Response() res:e.Response, @Request() req:e.Request, @Params('group') group:string) {
+    async saveConfig(@Response() res: e.Response, @Request() req: e.Request, @Params('group') group: string) {
         return this.respond(await this.supervisor.fs.saveConfig(group, req.body));
     }
 
 
     @Get('/config')
-    async config(@Response() res:e.Response) {
+    async config(@Response() res: e.Response) {
         return this.respondWithSuccess(await this.supervisor.fs.getAllConfig());
+    }
+
+
+    @Post('/config')
+    async createConfig(@Response() res: e.Response, @Request() req: e.Request) {
+        return this.respond(await this.supervisor.fs.create(req.body.filename, req.body.content));
+    }
+
+
+    @Post('/delete')
+    async deleteConfig(@Response() res: e.Response, @Request() req: e.Request) {
+        return this.respond(await this.supervisor.fs.delete(req.body.filename));
     }
 
 }

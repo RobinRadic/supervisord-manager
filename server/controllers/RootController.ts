@@ -1,3 +1,4 @@
+import jwt from 'jsonwebtoken'
 import type e from 'express';
 import { inject } from 'inversify';
 import { Controller, Get, Post, Request, Response } from '../decorators';
@@ -19,7 +20,9 @@ export class RootController extends BaseController {
 
         const data = {
             title: 'Supervisord Manager',
+            server_port: this.config.port
         };
+
         res.render('index', data);
     }
 
@@ -34,43 +37,20 @@ export class RootController extends BaseController {
         }
         let user = this.config.users.find(user => user.email === req.body.email && user.password === req.body.password);
         if ( user ) {
-            req.session[ 'user' ] = user;
-            await new Promise((resolve, reject) => {
+            const accessToken = jwt.sign({ email: user.email },
+                this.config.secret,
+                {
+                    algorithm: 'HS256',
+                    allowInsecureKeySizes: true,
+                    expiresIn: 86400, // 24 hours
+                });
 
-                // regenerate the session, which is good practice to help
-                // guard against forms of session fixation
-                req.session.regenerate(function (err) {
-                    if (err) reject(err)
-
-                    // store user information in session, typically a user id
-                    req.session[ 'user' ] = user;
-
-                    // save the session before redirection to ensure page
-                    // load does not happen before session is saved
-                    req.session.save(function (err) {
-                        if (err) return reject(err)
-                        resolve(user);
-                    })
-                })
-            });
-            return this.respondWithSuccess({ user: { email: user.email, name: user.name } });
+            return this.respondWithSuccess({ accessToken,user: {accessToken, email: user.email, name: user.name } });
 
         }
         return this.respondWithError('Invalid credentials');
     }
 
-    @Get('/logout')
-    async logout(
-        @Response() res: e.Response,
-        @Request() req: e.Request,
-    ) {
-        req.session.destroy(error => {
-            if (error) {
-                return res.json({ success: false, error });
-            }
-            return res.json({ success: true });
-        });
-    }
 
     @Get('/me')
     async me(

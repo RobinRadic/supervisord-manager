@@ -15,12 +15,14 @@ const highlighter = (code) => highlight(code, languages.ini, 'ini');
 
 </script>
 <template>
-    <PrismEditor class="my-editor" v-model="content" :highlight="highlighter"/>
+    <PrismEditor  class="my-editor" v-model="content" :highlight="highlighter"/>
 </template>
 
 <style>
 /* required class */
 .my-editor {
+    height: 100vh;
+
     /* we dont use `language-` classes anymore so thats why we need to add background and text color manually */
     background  : #2D2D2D;
     color       : #CCCCCC;
@@ -30,10 +32,21 @@ const highlighter = (code) => highlight(code, languages.ini, 'ini');
     font-size   : 14px;
     line-height : 1.5;
     padding     : 5px;
+
+    .prism-editor__container {
+        .prism-editor__textarea {
+            height: 100vh;
+            &:focus {
+                outline : none;
+            }
+        }
+        .prism-editor__editor {
+            height: 100vh;
+        }
+    }
 }
 
 /* optional class for removing the outline */
-.prism-editor__textarea:focus {
-    outline : none;
+.prism-editor__textarea{
 }
 </style>

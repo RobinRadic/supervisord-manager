@@ -26,3 +26,14 @@ export interface MeResponseData {
         name: string
     };
 }
+
+
+export interface LoginResponseData {
+    success: boolean;
+    error?: string;
+    user?: {
+        email: string
+        name: string
+        accessToken:string
+    };
+}

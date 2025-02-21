@@ -10,6 +10,7 @@ meta:
             width="448"
             rounded="lg"
         >
+            <v-form @submit="onSubmit">
             <div class="text-subtitle-1 text-medium-emphasis">Email</div>
 
             <v-text-field
@@ -43,7 +44,7 @@ meta:
                 variant="tonal"
                 v-if="error"
             >
-                <v-card-text  class="bg-error text-medium-emphasis text-caption">
+                <v-card-text class="bg-error text-medium-emphasis text-caption">
                     Invalid credentials!
                 </v-card-text>
             </v-card>
@@ -55,60 +56,62 @@ meta:
                 variant="tonal"
                 block
                 :disabled="disabled"
-                @click="onSubmit"
+                type="submit"
             >
                 Log In
             </v-btn>
-
+            </v-form>
         </v-card>
     </div>
 </template>
 
 <script lang="ts" setup>
-import { VIcon } from 'vuetify/components';
 import { useAlerts } from '@/composables/useAlerts.js';
 import { useSupervisor, useSupervisorActionHandler } from '@/plugins/supervisor/index.js';
+import { useStorage } from '@vueuse/core';
 import { useAuth } from '../plugins/auth.js';
 
-const emit = defineEmits<{
+const emit               = defineEmits<{
     back: []
-}>()
+}>();
+//@ts-ignore
+const storageEmail       = useStorage('email', '');
+const router             = useRouter();
+const auth               = useAuth();
+const supervisor         = useSupervisor();
+const actions            = useSupervisorActionHandler();
+const [ _, createAlert ] = useAlerts();
 
-const router = useRouter();
-const auth = useAuth();
-const supervisor = useSupervisor();
-const actions = useSupervisorActionHandler();
-const [_,createAlert] = useAlerts();
-
-const email = ref('');
-const password = ref('');
+const email        = ref(storageEmail.value);
+const password     = ref('');
 const showPassword = ref(false);
-const disabled = ref(false);
-const error = ref(false);
-const rules = {
+const disabled     = ref(false);
+const error        = ref(false);
+const rules        = {
     required: value => !!value || 'Required.',
     min: v => v.length >= 8 || 'Min 8 characters',
     emailMatch: () => (`The email and password you entered don't match`),
-}
-const onSubmit =async (event:SubmitEvent) => {
+};
+const onSubmit     = async (event: SubmitEvent) => {
     event.preventDefault();
     event.stopPropagation();
     disabled.value = true;
-    error.value = false;
+    error.value    = false;
     try {
         const res = await auth.login(email.value, password.value);
-        if(!res.success){
+        if ( !res.success ) {
             throw new Error(res.error);
         }
         console.log('link', res);
-        createAlert('success','Logged in', 'You have been logged in ',4000)
-        await supervisor.updateStatus()
-        await supervisor.updateConfig()
+        storageEmail.value=email.value;
+        createAlert('success', 'Logged in', 'You have been logged in ', 4000);
+        await supervisor.updateStatus();
+        await supervisor.updateConfig();
         return router.push('/');
     } catch (e) {
-        error.value = e.response?.data?.error||e.message
-        createAlert('error','Error',e.response?.data?.error||e.message,4000);
+        error.value = e.response?.data?.error || e.message;
+        createAlert('error', 'Error', e.response?.data?.error || e.message, 4000);
     }
     disabled.value = false;
-}
+};
 </script>

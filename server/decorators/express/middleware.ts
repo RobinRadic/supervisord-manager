@@ -5,7 +5,7 @@ import { Container, type InjectionToken } from './container';
 import { Type } from './types';
 
 
-export type MiddlewareFunction = (req: Request, res: Response, next: NextFunction) => void;
+export type MiddlewareFunction = (req: Request, res: Response, next: NextFunction) => any;
 export interface MiddlewareClass {
   use: MiddlewareFunction;
 }

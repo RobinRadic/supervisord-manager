@@ -46,15 +46,15 @@ export default defineConfig({
         ],
     },
 
-    build:{
+    build: {
+        outDir: 'dist/frontend',
+        rollupOptions: {
 
-rollupOptions:{
-
-    output:{
-        entryFileNames:'assets/index.js',
-        assetFileNames: `assets/[name].[ext]`,
-    }
-}
+            output: {
+                entryFileNames: 'assets/index.js',
+                assetFileNames: `assets/[name].[ext]`,
+            },
+        },
     },
     server: {
         port: 3000,

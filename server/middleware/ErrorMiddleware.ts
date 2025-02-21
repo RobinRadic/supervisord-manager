@@ -6,6 +6,7 @@ import e from 'express';
 export class ErrorMiddleware implements ErrorMiddlewareClass {
     public use(error: Error, request: e.Request, response: e.Response, next: e.NextFunction): void {
         response.status(500)
+        console.log(error);
         response.send({success:false,error: error.message});
     }
 
