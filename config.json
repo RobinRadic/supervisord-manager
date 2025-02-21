@@ -3,8 +3,8 @@
     "supervisor": {
         "client": {
             "host": "http://localhost:9005",
-            "username": "<username>",
-            "password": "<password>"
+            "username": "radic",
+            "password": "test"
         },
         "server": {
             "configurationFilePath": "/etc/supervisor/supervisord.conf"

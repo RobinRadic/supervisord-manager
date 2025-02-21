@@ -13,7 +13,7 @@ const _dirname = dirname(fileURLToPath(import.meta.url));
 
 export async function start(config: Configuration = {}) {
     let configData = {};
-    let configPath = findupSync('config.json', { cwd: _dirname });
+    let configPath = process.env.SUPERVISORD_CONFIG || findupSync('config.json', { cwd: _dirname });
     if ( configPath ) {
         configData = JSON.parse(readFileSync(configPath, 'utf-8'));
     }

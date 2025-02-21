@@ -25,11 +25,12 @@ export interface SupervisorClientConfiguration extends SupervisordClientOptions 
 
 export interface Configuration {
     port?: number;
+    host?: string;
     supervisor?: {
         client?: {
-            host?:string
-            username?:string
-            password?:string
+            host?: string
+            username?: string
+            password?: string
         };
         server?: {
             configurationFilePath?: string;
@@ -48,6 +49,7 @@ export class Server {
         this.di = Container.instance;
         options = defaults(options, {
             port: 3035,
+            host: '127.0.0.1',
             supervisor: {
                 client: {
                     host: 'http://127.0.0.1:9005',
@@ -68,6 +70,7 @@ export class Server {
                 origin: [
                     'http://localhost:3000',
                     'http://localhost:' + options.port,
+                    'http://' + options.host + ':' + options.port,
                 ],
                 credentials: true,
             }));
@@ -106,7 +109,7 @@ export class Server {
         return new Server(options);
     }
 
-    static async run(options: Configuration = {}): Promise<void> {
+    static async run(options: Configuration = {}): Promise<any> {
         return this.create(options).start();
     }
 
@@ -115,13 +118,19 @@ export class Server {
         return this;
     }
 
-    static beforeListen:Array<(di:Container)=>any> = [];
+    static beforeListen: Array<(di: Container) => any> = [];
 
     async start() {
         await attachControllers(this.di.app, Server.controllers);
         Server.beforeListen.forEach(cb => cb(this.di));
-        this.di.app.listen(this.di.config.port, () => {
-            console.log('Server is running on port ' + this.di.config.port);
-        });
+        const server = this.di.app.listen(
+            this.di.config.port,
+            this.di.config.host,
+            () => {
+                //@ts-ignore
+                console.log('Server is running at ', `http://${server.address().address}:${server.address().port}`);
+                console.log('With configuration:',this.di.config)
+            });
+        return server;
     }
 }
