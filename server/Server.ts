@@ -97,7 +97,7 @@ export class Server {
         this.di.bind(SupervisordClient).toDynamicValue(ctx => {
             const config: Configuration = ctx.container.get('config');
             let { host, ...options }    = config.supervisor.client;
-            return new SupervisordClient(host, options);
+            return new SupervisordClient(host, options as any);
         }).inSingletonScope();
         this.di.bind(ERROR_MIDDLEWARE).to(ErrorMiddleware);
     }
