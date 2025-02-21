@@ -27,7 +27,7 @@ export class AuthMiddleware implements MiddlewareClass {
                         message: 'Unauthorized!',
                     });
                 }
-                req.email = decoded.email;
+                req['email'] = decoded['email'];
                 next();
             });
     }

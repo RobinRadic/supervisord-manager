@@ -117,6 +117,11 @@ export class Supervisor {
         return res.data;
     }
 
+    async stopProcessGroup(name: string) {
+        const res = await this.get(`/stop-process-group/${name}`);
+        return res.data;
+    }
+
     async startProcess(name: string) {
         const res = await this.get(`/start-process/${name}`);
         return res.data;

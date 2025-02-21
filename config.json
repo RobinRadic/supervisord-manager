@@ -1,5 +1,15 @@
 {
-    "allowed_ips": [],
+    "port": 4035,
+    "supervisor": {
+        "client": {
+            "host": "http://localhost:9005",
+            "username": "<username>",
+            "password": "<password>"
+        },
+        "server": {
+            "configurationFilePath": "/etc/supervisor/supervisord.conf"
+        }
+    },
     "users": [
         {"name": "Robin","email": "rradic@hotmail.com","password": "test"}
     ]

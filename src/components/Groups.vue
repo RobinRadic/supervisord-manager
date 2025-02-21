@@ -20,6 +20,7 @@ const items: Ref<Group[]> = toRef(props, 'groups');
 const handlers              = {
     start: async (name: string) => actions.startProcess(name),
     stop: async (name: string) => actions.stopProcess(name),
+    stopGroup: async (name: string) => actions.stopProcessGroup(name),
     startGroup: async (name: string) => actions.startProcessGroup(name),
     reload: async (name: string) => actions.reload(),
     edit: (item) => {
@@ -80,14 +81,14 @@ const getStatenameChipColor = (state: string) => {//@formatter:off
                                    prepend-icon="mdi-stop"
                                    color="warning"
                                    size="small"
-                                   @click="() => handlers.stop(group.name)"
+                                   @click="() => handlers.stopGroup(group.name)"
                             >Stop
                             </v-btn>
                             <v-btn v-else
                                    prepend-icon="mdi-play"
                                    color="success"
                                    size="small"
-                                   @click="() => handlers.start(group.name)"
+                                   @click="() => handlers.startGroup(group.name)"
                             >Start
                             </v-btn>
                             <v-btn prepend-icon="mdi-minus"

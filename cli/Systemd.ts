@@ -2,7 +2,7 @@ import { type App, exec, ExecOptions, inject, injectable } from '@radicjs/comman
 import { isArray, isNumber } from '@radicjs/utils';
 
 @injectable()
-export class Systemd {
+ class Systemd {
     command = 'sudo systemctl';
     @inject('app') app: App;
 
@@ -65,7 +65,7 @@ export class Systemd {
     }
 }
 
-export namespace Systemd {
+namespace Systemd {
 
     export interface ProcessInfo {
         pid: number;
@@ -248,3 +248,5 @@ const parseSystemdStatus = (statusOutput: string): Systemd.Status => {
 
     return result;
 };
+
+export {Systemd}

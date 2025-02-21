@@ -65,6 +65,11 @@ pid: ${pid}
         return this.supervisor.api.startProcessGroup(name);
     }
 
+    @Get('/stop-process-group/:name')
+    async stopProcessGroup(@Response() res:e.Response, @Params('name') name:string) {
+        return this.supervisor.api.stopProcessGroup(name);
+    }
+
     @Get('/start-process/:name')
     async startProcess(@Response() res:e.Response, @Params('name') name:string) {
         return this.supervisor.api.startProcess(name);

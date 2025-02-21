@@ -55,6 +55,21 @@ export class SupervisorActionHandler {
         destroy();
     }
 
+    async stopProcessGroup(name:string) {
+        const destroy = this.createLoader({ message: `Stopping process group...` });
+        try {
+            const response = await this.supervisor.stopProcessGroup(name);
+            await this.supervisor.updateStatus();
+            destroy();
+            this.createAlert('success','Added', 'Process group has been stopped', 4000)
+            return true;
+        } catch (e) {
+            this.createAlert('error','Error',e.response?.data?.error||e.message,alertTimeout);
+        }
+        destroy();
+        return false;
+    }
+
     async addProcessGroup(name:string) {
         const destroy = this.createLoader({ message: `Adding process group...` });
         try {
@@ -69,6 +84,7 @@ export class SupervisorActionHandler {
         destroy();
         return false;
     }
+
     async removeProcessGroup(name:string) {
         const destroy = this.createLoader({ message: `Remove process group...` });
         try {

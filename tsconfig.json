@@ -27,7 +27,7 @@
     "verbatimModuleSyntax": false
   },
   "extends": "@vue/tsconfig/tsconfig.dom.json",
-  "include": ["env.d.ts", "src/**/*", "src/**/*.vue","server/**/*","shared/**/*","cli/**/*","tsup.config.ts","build.ts"],
+  "include": ["env.d.ts", "src/**/*", "src/**/*.vue","server/**/*","shared/**/*","cli/**/*","tsup.config.ts","build.ts","rollup.config.ts"],
   "exclude": ["src/**/__tests__/*"],
   "references": [
   ]

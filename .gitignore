@@ -25,3 +25,5 @@ pnpm-debug.log*
 /supervisor.stdout.log
 /.yarn
 .env
+/install.sh
+/supervisor*

@@ -4,9 +4,10 @@
 
     "tsBuildInfoFile": "./node_modules/.tmp/tsconfig.app.tsbuildinfo",
     "experimentalDecorators": true,
+    "emitDecoratorMetadata": true,
     "baseUrl": ".",
-    "rootDir": "cli",
-    "outDir": "dist/cli",
+    "rootDir": ".",
+    "outDir": "dist",
     "strict": false,
     "noImplicitAny": false,
     "noImplicitThis": false,
@@ -20,16 +21,16 @@
     "skipLibCheck": true,
     "allowJs": true,
     "checkJs": false,
-    "allowImportingTsExtensions": true,
+    "allowImportingTsExtensions": false,
     "module": "ESNext",
     "moduleResolution": "Bundler",
     "esModuleInterop": true,
     "isolatedModules": true,
     "target": "ES2020",
-    "verbatimModuleSyntax": false
+    "verbatimModuleSyntax": false,
   },
   "extends": "@vue/tsconfig/tsconfig.dom.json",
-  "include": ["cli/**/*"],
+  "include": ["server/**/*","shared/**/*","cli/**/*"],
   "exclude": ["src/**/__tests__/*"],
   "references": [
   ]

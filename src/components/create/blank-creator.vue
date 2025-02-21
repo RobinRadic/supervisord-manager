@@ -14,12 +14,13 @@ const emit       = defineEmits<{
 }>();
 
 const onSave = async () => {
-    await supervisor.create(strEnsureRight(filename.value,'.conf'), content.value);
-    router.push('/dashboard');
+    await supervisor.create(strEnsureRight(filename.value, '.conf'), content.value);
+    return router.push('/dashboard');
 };
 const bar    = useAppBarComponents();
 bar.clearComponents();
-bar.add(VBtn, { color: 'success', onClick: () => onSave(), variant: 'flat', size: 'x-large', text: 'Save', prependIcon: 'mdi-content-save' });
+bar.add(VBtn, { color: 'primary', to: '/dashboard', variant: 'flat', size: 'x-large', text: 'Back', border: 's-lg', prependIcon: 'mdi-arrow-left' });
+bar.add(VBtn, { color: 'success', onClick: () => onSave(), variant: 'flat', size: 'x-large', text: 'Save', border: 's-lg', prependIcon: 'mdi-content-save' });
 
 </script>
 

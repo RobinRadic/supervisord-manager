@@ -1,5 +1,5 @@
-import type { Env } from '../shared/env.js';
-import type { Systemd } from './Systemd.js';
+import { Env } from '../shared/env.js';
+import { Systemd } from './Systemd.js';
 
 declare module '@radicjs/command' {
 
