@@ -20,7 +20,8 @@ export class RootController extends BaseController {
 
         const data = {
             title: 'Supervisord Manager',
-            server_port: this.config.port
+            server_port: this.config.port,
+            server_host: this.config.host
         };
 
         res.render('index', data);

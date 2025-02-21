@@ -1,7 +1,14 @@
-# supervisord-manager
+## Supervisord Manager
 
-A simple web interface to manage supervisord processes.
+**Supervisord Manager** is a web-based interface designed to manage Supervisord processes. It provides a user-friendly way to monitor and control processes managed by Supervisord, making it easier to handle process management tasks.
 
+### Features
+
+- **Web Interface**: A simple and intuitive web interface to manage Supervisord processes.
+- **User Authentication**: Secure access with user authentication.
+- **Process Control**: Start, stop, and restart processes directly from the web interface.
+- **Configuration Management**: Manage Supervisord configuration files.
+- **Real-time Monitoring**: View real-time status and logs of managed processes.
 
 ![Preview](https://i.imgur.com/l2DFjuG.gif)
 

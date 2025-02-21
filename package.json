@@ -1,11 +1,11 @@
 {
     "name": "supervisord-monitor",
-    "description": "A supervisord web management interface",
+    "description": "Supervisord Manager is a web-based interface designed to manage Supervisord processes.",
     "keywords": [
         "supervisor",
         "supervisord"
     ],
-    "version": "1.0.0",
+    "version": "1.0.2",
     "type": "module",
     "main": "./dist/server/index.mjs",
     "module": "./dist/server/index.mjs",
@@ -43,6 +43,7 @@
         "dev": "yarn run dev:frontend",
         "dev:frontend": "vite",
         "dev:server": "nodemon --watch ./server --ext ts,js --exec \"/home/radic/.nvm/versions/node/v22.12.0/bin/node /home/radic/projects/vuetify/node_modules/.bin/tsx ./server/start.ts\"",
+        "prepublish": "yarn run build",
         "build": "yarn run build:frontend && yarn run build:node",
         "build:frontend": "vite build",
         "build:node": "tsx ./node_modules/.bin/rollup --config ./rollup.config.ts",

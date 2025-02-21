@@ -36,6 +36,7 @@ export async function start(config: Configuration = {}) {
             const data = {
                 title: 'Supervisord Manager',
                 server_port: config.port,
+                server_host: config.host
             };
             res.render('index', data);
         });
