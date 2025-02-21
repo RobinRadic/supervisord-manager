@@ -5,8 +5,23 @@
         "supervisor",
         "supervisord"
     ],
-    "type": "module",
     "version": "1.0.0",
+    "type": "module",
+    "main": "./dist/server/index.mjs",
+    "module": "./dist/server/index.mjs",
+    "types": "./server/index.ts",
+    "source": "./server/index.ts",
+    "exports": {
+        "./package.json": "./package.json",
+        ".": "./dist/server/index.mjs",
+        "./cli": "./dist/cli/index.mjs",
+        "./server": "./dist/server/index.mjs"
+    },
+    "files": [
+        "dist",
+        "bin",
+        "package.json"
+    ],
     "repository": {
         "type": "git",
         "url": "git+https://github.com/RobinRadic/supervisord-manager.git"
