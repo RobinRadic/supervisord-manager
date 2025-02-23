@@ -39,7 +39,10 @@
 ```bash
 supervisord-manager serve --port 1234 \
     --admin-email "admin@admin.com" --admin-password test --admin-name Admin \
-    --rpc-host 127.0.0.1:9005 --rpc-username <username> --rpc-password <password> 
+    --rpc-host 127.0.0.1:9005 --rpc-username <username> --rpc-password <password>
+     
+# or simply
+supervisord-manager serve --config ./config.json
 ```
 Will host the web interface on http://localhost:1234. You can log in with the admin credentials.
 
