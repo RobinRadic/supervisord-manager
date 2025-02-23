@@ -46,7 +46,7 @@ Will host the web interface on http://localhost:1234. You can log in with the ad
 > Note that for full functionality, the user running the server should have read/write access to `/etc/supervisor/conf.d`
 
 ### Full installation
-Generate configuration file + systemd service  
+Generates configuration file and you can choose between systemd service or supervisor program   
 ```bash
 mkdir ~/.supervisord-manager
 cd ~/.supervisord-manager
@@ -57,12 +57,15 @@ Will generate
 ```
 - config.json
 - supervisord-monitor.service
-- install.sh
+- supervisord-monitor.conf
+- install-as-systemd.sh
+- install-as-supervisor.sh
 ```
 
 - Open and edit `config.json` and set all required values
-- Open and review `supervisord-monitor.service`, make sure the usage of node version & run as user are correct
-- Run `install.sh` to symlink `supervisord-monitor.service` into `/lib/systemd/system` and reload & start the service
+- Open and review `supervisord-monitor.conf` or if you want to use systemd `supervisord-monitor.service`, make sure the usage of node version & run as user are correct
+- Run `install-as-supervisor.sh` to symlink `supervisord-monitor.conf` into `/etc/supervisor/conf.d` and reload & start the service
+- **OR** Run `install-as-systemd.sh` to symlink `supervisord-monitor.service` into `/lib/systemd/system` and reload & start the service
 
 
 #### Configuration

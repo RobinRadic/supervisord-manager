@@ -71,11 +71,54 @@ sudo systemctl enable $SERVICE
 echo "sudo systemctl start $SERVICE"
 sudo systemctl start $SERVICE
            `;
-           const installOutputPath = join(process.cwd(), 'install.sh');
+           const installOutputPath = join(process.cwd(), 'install-as-systemd.sh');
            writeFileSync(installOutputPath, installTemplate, 'utf-8');
-           this.out.success(`Generated {bold install.sh}`);
+           this.out.success(`Generated {bold install-as-systemd.sh}`);
+
+
+           const supervisorTemplate = `
+[program:supervisord-monitor]
+command=${nodePath} ${app.path.app('bin/supervisord-monitor.mjs')} serve --config ${process.cwd()}/config.json --no-interaction --silent
+directory=${app.path.app()}
+autostart=true                     ; Start on system boot
+autorestart=true                    ; Restart if it crashes
+stderr_logfile=${process.cwd()}/supervisord-monitor.err.log  ; Log errors
+stdout_logfile=${process.cwd()}/supervisord-monitor.out.log  ; Log output
+environment=NODE_ENV="production"  ; Set environment variables
+;user=node                           ; Run as 'node' user (or another system user)
+numprocs=1                          ; Number of processes
+startsecs=5                         ; Wait 5 seconds before considering it started
+stopsignal=QUIT                     ; Graceful shutdown
+           `
+           const supervisorOutputPath = join(process.cwd(), 'supervisord-monitor.conf');
+           writeFileSync(supervisorOutputPath, supervisorTemplate, 'utf-8');
+           this.out.success(`Generated {bold supervisord-monitor.conf}`);
+
+
+           const installSupervisorTemplate = `#!/usr/bin/env bash
+SERVICE=supervisord-monitor
+MYDIR=$( cd "$( dirname "\${BASH_SOURCE[0]}" )" && pwd )
+
+echo "sudo ln -s \${MYDIR}/supervisord-monitor.conf /etc/supervisor/conf.d/supervisord-monitor.conf"
+sudo ln -s \${MYDIR}/supervisord-monitor.conf /etc/supervisor/conf.d/supervisord-monitor.conf
+
+echo "sudo supervisorctl reread"
+sudo supervisorctl reread
+
+echo "sudo supervisorctl update"
+sudo supervisorctl update
+
+echo "sudo supervisorctl start supervisord-monitor"
+sudo supervisorctl start supervisord-monitor
+           `;
+           const installSupervisorOutputPath = join(process.cwd(), 'install-as-supervisor.sh');
+           writeFileSync(installSupervisorOutputPath, installSupervisorTemplate, 'utf-8');
+           this.out.success(`Generated {bold install-as-supervisor.sh}`);
+
+
 
            this.out.success(`All done!`);
+
 
        });
 

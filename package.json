@@ -5,7 +5,7 @@
         "supervisor",
         "supervisord"
     ],
-    "version": "1.0.2",
+    "version": "1.0.3",
     "type": "module",
     "main": "./dist/server/index.mjs",
     "module": "./dist/server/index.mjs",
